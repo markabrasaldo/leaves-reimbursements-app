@@ -10,16 +10,20 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { useTransition } from 'react';
+import { useActionState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
+import { authentication } from '@/lib/auth-action';
 import GithubSignInButton from './github-auth-button';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Enter a valid email address' })
+  email: z.string().trim().email({ message: 'Enter a valid email address' }),
+  password: z
+    .string()
+    .trim()
+    .min(6, { message: 'Minimum of 6 characters or digits' })
 });
 
 type UserFormValue = z.infer<typeof formSchema>;
@@ -27,32 +31,31 @@ type UserFormValue = z.infer<typeof formSchema>;
 export default function UserAuthForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
-  const [loading, startTransition] = useTransition();
   const defaultValues = {
-    email: 'demo@gmail.com'
+    email: '',
+    password: ''
   };
+
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
     defaultValues
   });
 
-  const onSubmit = async (data: UserFormValue) => {
-    startTransition(() => {
-      signIn('credentials', {
-        email: data.email,
-        callbackUrl: callbackUrl ?? '/dashboard'
-      });
-      toast.success('Signed In Successfully!');
-    });
-  };
+  const [loginState, loginFormAction, isLogingIn] = useActionState(
+    authentication,
+    undefined
+  );
+
+  useEffect(() => {
+    if (loginState?.messageType === 'success') {
+      toast.success(loginState.message);
+    }
+  }, [loginState]);
 
   return (
     <>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='w-full space-y-2'
-        >
+        <form className='w-full space-y-2' action={loginFormAction}>
           <FormField
             control={form.control}
             name='email'
@@ -63,7 +66,7 @@ export default function UserAuthForm() {
                   <Input
                     type='email'
                     placeholder='Enter your email...'
-                    disabled={loading}
+                    disabled={isLogingIn}
                     {...field}
                   />
                 </FormControl>
@@ -72,8 +75,38 @@ export default function UserAuthForm() {
             )}
           />
 
-          <Button disabled={loading} className='ml-auto w-full' type='submit'>
-            Continue With Email
+          <FormField
+            control={form.control}
+            name='password'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type='password'
+                    placeholder='Enter your password...'
+                    disabled={isLogingIn}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {loginState?.messageType === 'error' && (
+            <div
+              className='mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800 dark:bg-gray-800 dark:text-red-400'
+              role='alert'
+            >
+              <span className='font-medium'>{loginState.message}</span>
+            </div>
+          )}
+          <Button
+            disabled={isLogingIn}
+            className='ml-auto w-full'
+            type='submit'
+          >
+            Sign In
           </Button>
         </form>
       </Form>

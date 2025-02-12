@@ -40,11 +40,13 @@ import {
   GalleryVerticalEnd,
   LogOut
 } from 'lucide-react';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import * as React from 'react';
 import { Icons } from '../icons';
+import { signOutAction } from '@/lib/auth-action';
+import { useActionState } from 'react';
+import { Button } from '../ui/button';
 
 export const company = {
   name: 'Acme Inc',
@@ -56,6 +58,11 @@ export default function AppSidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const { state, isMobile } = useSidebar();
+
+  const [_formState, formAction, isPending] = useActionState(
+    signOutAction,
+    undefined
+  );
 
   return (
     <Sidebar collapsible='icon'>
@@ -205,10 +212,19 @@ export default function AppSidebar() {
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
-                  <LogOut />
-                  Log out
-                </DropdownMenuItem>
+                <form action={formAction}>
+                  <DropdownMenuItem>
+                    <Button
+                      type='submit'
+                      className='w-full'
+                      variant={'ghost'}
+                      disabled={isPending}
+                    >
+                      <LogOut />
+                      Log out{' '}
+                    </Button>
+                  </DropdownMenuItem>
+                </form>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

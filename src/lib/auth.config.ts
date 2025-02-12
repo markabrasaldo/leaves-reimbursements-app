@@ -1,5 +1,6 @@
 import { NextAuthConfig } from 'next-auth';
 import CredentialProvider from 'next-auth/providers/credentials';
+import { z } from 'zod';
 import GithubProvider from 'next-auth/providers/github';
 
 const authConfig = {
@@ -17,15 +18,30 @@ const authConfig = {
           type: 'password'
         }
       },
-      async authorize(credentials, req) {
-        const user = {
-          id: '1',
-          name: 'John',
-          email: credentials?.email as string
-        };
-        if (user) {
+      async authorize(credentials) {
+        const parsedCredentials = z
+          .object({
+            email: z
+              .string()
+              .trim()
+              .email({ message: 'Enter a valid email address' }),
+            password: z
+              .string()
+              .trim()
+              .min(6, { message: 'Minimum of 6 characters or digits' })
+          })
+          .safeParse(credentials);
+
+        if (parsedCredentials.success) {
+          const { email } = parsedCredentials.data;
+
+          const user = {
+            id: '1',
+            name: 'John',
+            email: email as string
+          };
           // Any object returned will be saved in `user` property of the JWT
-          return user;
+          return parsedCredentials.data;
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null;
@@ -37,6 +53,21 @@ const authConfig = {
   ],
   pages: {
     signIn: '/' //sigin page
+  },
+  callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+
+      const onDashboard = nextUrl.pathname.startsWith('/dashboard');
+
+      if (onDashboard) {
+        if (isLoggedIn) return true;
+        return false;
+      } else if (isLoggedIn) {
+        return Response.redirect(new URL('/dashboard', nextUrl));
+      }
+      return true;
+    }
   }
 } satisfies NextAuthConfig;
 
