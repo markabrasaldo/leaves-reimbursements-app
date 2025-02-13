@@ -21,7 +21,6 @@ export default async function ProductListingPage({}: ProductListingPage) {
   };
 
   const data = await fakeProducts.getProducts(filters);
-  console.log('data', data);
   const totalProducts = data.total_products;
   const products: Product[] = data.products;
 
