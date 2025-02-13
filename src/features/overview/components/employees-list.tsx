@@ -25,7 +25,7 @@ export async function EmployeeList() {
       <CardHeader className='flex flex-row place-content-between items-center'>
         <CardTitle>Employees</CardTitle>
         <Link
-          href='/dashboard/leaves'
+          href='/leave'
           className={cn(
             buttonVariants({ variant: 'link' }),
             'mt-0 space-y-0 p-0'

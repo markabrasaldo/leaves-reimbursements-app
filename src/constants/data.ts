@@ -24,10 +24,18 @@ export const navItems: NavItem[] = [
   {
     title: 'Leave',
     url: '/dashboard/leave',
-    icon: 'dashboard',
+    icon: 'leave',
     isActive: false,
-    shortcut: ['d', 'd'],
+    shortcut: ['l', 'l'],
     items: [] // Empty array as there are no child items for Dashboard
+  },
+  {
+    title: 'Reimbursements',
+    url: '/dashboard/reimbursement',
+    icon: 'reimbursement',
+    shortcut: ['r', 'r'],
+    isActive: false,
+    items: [] // No child items
   },
   {
     title: 'Product',
@@ -139,7 +147,7 @@ export const dashboardCardItems: CardItem[] = [
   {
     cardTitle: 'On Leave',
     cardValue: 5,
-    cardIcon: 'planeTakeoff',
+    cardIcon: 'leave',
     cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },

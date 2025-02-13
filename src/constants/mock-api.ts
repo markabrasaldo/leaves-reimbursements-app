@@ -232,13 +232,19 @@ const reimbursementType = [
 export function createRandomReimbursement() {
   return {
     id: faker.string.uuid(),
-    type: faker.helpers.arrayElement(reimbursementType),
-    organization_id: faker.string.uuid(),
+    reimbursementType: {
+      reimbursement_type_id: faker.string.uuid(),
+      name: faker.helpers.arrayElement(reimName)
+    },
+    organization: {
+      organization_id: faker.string.uuid(),
+      name: faker.company.name()
+    },
     date: faker.date.anytime(),
     amount: faker.finance.amount(),
     status: faker.helpers.arrayElement(reimbursementStatus),
-    created_at: faker.date.anytime(),
-    updated_at: faker.date.anytime(),
+    created_at: faker.date.anytime().toISOString(),
+    updated_at: faker.date.anytime().toISOString(),
     created_by: faker.string.uuid(),
     updated_by: faker.string.uuid(),
     attachments: faker.image.avatar()
@@ -248,6 +254,13 @@ export function createRandomReimbursement() {
 export const reimbursement = faker.helpers.multiple(createRandomReimbursement, {
   count: 5
 });
+
+export const reimbursementList = faker.helpers.multiple(
+  createRandomReimbursement,
+  {
+    count: 50
+  }
+);
 
 // leaves
 const leaveType = [

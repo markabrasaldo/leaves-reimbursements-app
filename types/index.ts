@@ -38,6 +38,13 @@ export interface CardItem {
   trending: 'up' | 'down';
 }
 
+export interface TableFilter {
+  page?: number;
+  limit?: number;
+  categories?: string;
+  search?: string;
+}
+
 export type MainNavItem = NavItemWithOptionalChildren;
 
 export type SidebarNavItem = NavItemWithChildren;
