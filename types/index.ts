@@ -30,6 +30,14 @@ export interface FooterItem {
   }[];
 }
 
+export interface CardItem {
+  cardTitle: string;
+  cardValue: string | number | undefined;
+  cardIcon: keyof typeof Icons;
+  cardSubText: string;
+  trending: 'up' | 'down';
+}
+
 export type MainNavItem = NavItemWithOptionalChildren;
 
 export type SidebarNavItem = NavItemWithChildren;

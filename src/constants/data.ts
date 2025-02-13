@@ -1,4 +1,4 @@
-import { NavItem } from 'types';
+import { CardItem, NavItem } from 'types';
 
 export type Product = {
   photo_url: string;
@@ -118,4 +118,43 @@ export const recentSalesData: SaleUser[] = [
     image: 'https://api.slingacademy.com/public/sample-users/5.png',
     initials: 'SD'
   }
+];
+
+//Info: The following data is used for the data displayed on the top part of dashboard page.
+export const dashboardCardItems: CardItem[] = [
+  {
+    cardTitle: 'Total Employee',
+    cardValue: 60,
+    cardIcon: 'logo',
+    cardSubText: `${'5%'} Last Month`,
+    trending: 'up'
+  },
+  {
+    cardTitle: 'New Employee',
+    cardValue: 2,
+    cardIcon: 'userPlus',
+    cardSubText: `${'1%'} Last Month`,
+    trending: 'up'
+  },
+  {
+    cardTitle: 'On Leave',
+    cardValue: 5,
+    cardIcon: 'planeTakeoff',
+    cardSubText: `${'1%'} Last Month`,
+    trending: 'up'
+  },
+  {
+    cardTitle: 'Over Time',
+    cardValue: 1000,
+    cardIcon: 'clockAlert',
+    cardSubText: `${'6%'} Last Month`,
+    trending: 'up'
+  }
+  // {
+  //   cardTitle: 'Early Out',
+  //   cardValue: 6,
+  //   cardIcon: 'clockArrowDown',
+  //   cardSubText: `${'8%'} Last Month`,
+  //   trending: 'up'
+  // }
 ];

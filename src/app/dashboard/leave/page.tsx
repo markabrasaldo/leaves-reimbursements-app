@@ -4,9 +4,26 @@ import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 import { searchParamsCache, serialize } from '@/lib/searchparams';
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
+import { leaves } from '@/constants/mock-api';
+import getConfig from 'next/config';
+
+// use when endpoint is available
+async function getLeaveList(organization_code: string) {
+  const { publicRuntimeConfig } = getConfig();
+  const baseUrl = publicRuntimeConfig.baseUrl;
+  const res = await fetch(`${baseUrl}/leaves`);
+
+  return res.json();
+}
 
 async function getLeaveTypes() {
+  // const data = await getLeaveList();
+
   await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const leaveList = await leaves;
+
+  console.log('leaveList', leaveList);
 
   return {
     leaveTypes: [
