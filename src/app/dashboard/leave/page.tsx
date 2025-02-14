@@ -1,11 +1,13 @@
 import PageContainer from '@/components/layout/page-container';
-import { LeaveTypeCard } from '@/features/leave/components/leave-type-card';
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 import { searchParamsCache, serialize } from '@/lib/searchparams';
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
 import { leaves } from '@/constants/mock-api';
 import getConfig from 'next/config';
+import { LeaveCard } from '@/features/leave/components/leave-card';
+import { DataTable } from '@/features/leave/components/leave-table';
+import { columns } from '@/features/leave/components/table-columns';
 
 // use when endpoint is available
 async function getLeaveList(organization_code: string) {
@@ -48,7 +50,8 @@ async function getLeaveTypes() {
         description: 'Time off for personal matters or emergencies',
         icon: 'User'
       }
-    ]
+    ],
+    leaveList
   };
 }
 
@@ -56,8 +59,8 @@ type pageProps = {
   searchParams: Promise<SearchParams>;
 };
 
-export default async function LeavePage(props: pageProps) {
-  const { leaveTypes } = await getLeaveTypes();
+export default async function Page(props: pageProps) {
+  const { leaveTypes, leaveList } = await getLeaveTypes();
 
   const searchParams = await props.searchParams;
 
@@ -67,13 +70,18 @@ export default async function LeavePage(props: pageProps) {
 
   return (
     <PageContainer>
-      <div className='container mx-auto px-4 py-8'>
-        <h1 className='mb-6 text-2xl font-bold'>Request Leave</h1>
+      <div className='container'>
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
         >
-          <LeaveTypeCard data={leaveTypes} />
+          <LeaveCard data={leaveTypes} />
+        </Suspense>
+
+        <Suspense
+          fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
+        >
+          <DataTable columns={columns} data={leaveList} />
         </Suspense>
       </div>
     </PageContainer>
