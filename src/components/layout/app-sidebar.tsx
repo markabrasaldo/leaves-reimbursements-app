@@ -56,6 +56,7 @@ export const company = {
 
 export default function AppSidebar() {
   const { data: session } = useSession();
+
   const pathname = usePathname();
   const { state, isMobile } = useSidebar();
 

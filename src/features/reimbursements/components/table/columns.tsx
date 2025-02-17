@@ -29,7 +29,10 @@ export const columns: ColumnDef<Reimbursement>[] = [
   },
   {
     accessorKey: 'amount',
-    header: 'Amount'
+    header: 'Amount',
+    cell: ({ row }) => {
+      return `₱${row.original.amount}`;
+    }
   },
   {
     accessorKey: 'attachments',

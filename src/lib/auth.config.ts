@@ -18,6 +18,7 @@ const authConfig = {
           type: 'password'
         }
       },
+
       async authorize(credentials) {
         const parsedCredentials = z
           .object({
@@ -37,11 +38,12 @@ const authConfig = {
 
           const user = {
             id: '1',
-            name: 'John',
+            role: 'Admin',
             email: email as string
           };
+
           // Any object returned will be saved in `user` property of the JWT
-          return parsedCredentials.data;
+          return user;
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null;
@@ -67,6 +69,9 @@ const authConfig = {
         return Response.redirect(new URL('/dashboard', nextUrl));
       }
       return true;
+    },
+    session({ session, token }) {
+      return { ...session, ...token };
     }
   }
 } satisfies NextAuthConfig;

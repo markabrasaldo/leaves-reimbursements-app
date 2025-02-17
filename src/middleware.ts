@@ -9,39 +9,26 @@ import { cookies } from 'next/headers';
 
 const { auth } = NextAuth(authConfig);
 
-const protectedRoutes = ['/dashboard/:path*'];
-const publicRoutes = ['/login', '/signup', '/'];
+const protectedRoutes = ['/dashboard'];
+// const publicRoutes = ['/login', '/signup', '/'];
 
 export default auth(async (request: NextRequest) => {
-  const path = request.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.includes(path);
-  const isPublicRoute = publicRoutes.includes(path);
-  const cookie = (await cookies()).get('authjs.session-token')?.value;
+  const path = request.nextUrl.pathname.split('/')[1];
 
-  // if passs is decrypted
-  // const session = await decrypt(cookie)
+  const isProtectedRoute = protectedRoutes.includes(`/${path}`);
+  const cookie = (await cookies()).get('authjs.session-token')?.value;
 
   if (
     isProtectedRoute &&
-    cookie
+    !cookie
     // && !session?.userId // check userId
   ) {
     return NextResponse.redirect(new URL('/', request.nextUrl));
   }
 
-  if (
-    isPublicRoute &&
-    // session?.userId && // check userId
-    cookie && //temp
-    !request.nextUrl.pathname.startsWith('/dashboard')
-  ) {
-    return NextResponse.redirect(new URL('/dashboard', request.nextUrl));
-  }
-
   return NextResponse.next();
 });
 
-// export const config = { matcher: ['/dashboard/:path*'] };
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)']
 };

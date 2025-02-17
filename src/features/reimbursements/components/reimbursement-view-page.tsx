@@ -1,10 +1,26 @@
-import { fakeProducts, Product } from '@/constants/mock-api';
+import { delay, fakeReimbursements } from '@/constants/mock-api';
 import { notFound } from 'next/navigation';
-import ProductForm from './product-form';
+import ReimbursementForm from './reimbursement-form';
+import { Reimbursement } from '../types';
 
 type TReimbursementViewPageProps = {
   reimbursementId: string;
 };
+
+// use when endpoint is available
+async function getReimbursements(reimbursementId: number) {
+  // const { publicRuntimeConfig } = getConfig();
+  // const baseUrl = publicRuntimeConfig.baseUrl;
+  // const res = await fetch(`${baseUrl}/${organization_code}/reimbursements/`);
+
+  const response = await fakeReimbursements.getReimbursementListById(
+    Number(reimbursementId)
+  );
+
+  return {
+    reimbursement: response
+  };
+}
 
 export default async function TReimbursementViewPageProps({
   reimbursementId
@@ -14,8 +30,9 @@ export default async function TReimbursementViewPageProps({
 
   if (reimbursementId !== 'new') {
     //change fetching of data
-    const data = await fakeProducts.getProductById(Number(reimbursementId));
-    reimbursement = data.product as Product;
+    const data = await getReimbursements(reimbursementId);
+
+    reimbursement = data.reimbursement as Reimbursement;
     if (!reimbursement) {
       notFound();
     }
@@ -23,5 +40,7 @@ export default async function TReimbursementViewPageProps({
   }
 
   //change form
-  return <ProductForm initialData={reimbursement} pageTitle={pageTitle} />;
+  return (
+    <ReimbursementForm initialData={reimbursement} pageTitle={pageTitle} />
+  );
 }

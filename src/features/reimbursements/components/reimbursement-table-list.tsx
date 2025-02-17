@@ -1,24 +1,47 @@
-import { delay, reimbursementList } from '@/constants/mock-api';
+import { delay, fakeReimbursements } from '@/constants/mock-api';
 import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as ReimbursementTable } from '@/components/ui/table/data-table';
-import { columns } from './product-tables/columns';
+import { columns } from './table/columns';
 import { TableFilter } from 'types';
 import { Reimbursement } from '../types';
+import { matchSorter } from 'match-sorter';
 
 // use when endpoint is available
 async function getReimbursements(filters: TableFilter) {
   // const { publicRuntimeConfig } = getConfig();
   // const baseUrl = publicRuntimeConfig.baseUrl;
   // const res = await fetch(`${baseUrl}/${organization_code}/reimbursements/`);
-  await delay(1000);
+  await delay(1500);
 
-  const response = await reimbursementList;
+  const response = await fakeReimbursements.getReimbursementList();
 
-  const totalReimbursements = response.length;
+  let newResponse = response;
+
+  if (filters?.search) {
+    newResponse = matchSorter(response, filters.search, {
+      keys: ['organization', 'reimbursementType', 'status']
+    });
+  }
+  if (filters?.categories) {
+    const categoriesArray = filters.categories
+      ? filters.categories.split('.')
+      : [];
+
+    if (filters.categories.length > 0) {
+      newResponse = response.filter((reimbursement) =>
+        categoriesArray.includes(reimbursement.status)
+      );
+    }
+  }
+  const totalReimbursements = newResponse.length;
+
+  //pagination
+  const offset = (filters.page - 1) * filters.limit;
+  const paginatedResponse = newResponse.slice(offset, offset + filters.limit);
 
   return {
     total_reimbursements: totalReimbursements,
-    reimbursements: response
+    reimbursements: paginatedResponse
   };
 }
 
@@ -39,8 +62,6 @@ export default async function ReimbursementListPage() {
   const data = await getReimbursements(filters);
   const totalReimbursements = data.total_reimbursements;
   const reimbursements: Reimbursement[] = data.reimbursements;
-
-  console.log('reimbursements', reimbursements);
 
   return (
     <ReimbursementTable

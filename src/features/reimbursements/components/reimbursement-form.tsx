@@ -20,10 +20,11 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Product } from '@/constants/mock-api';
+import { reimbursementType } from '@/constants/mock-api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { Reimbursement } from '../types';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -46,27 +47,29 @@ const formSchema = z.object({
       '.jpg, .jpeg, .png and .webp files are accepted.'
     ),
   name: z.string().min(2, {
-    message: 'Product name must be at least 2 characters.'
+    message: 'Name must be at least 2 characters.'
   }),
-  category: z.string(),
-  price: z.number(),
+  reimbursementType: z.string(),
+  amount: z.number(),
+  status: z.string(),
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.'
   })
 });
 
-export default function ProductForm({
+export default function ReimbursementForm({
   initialData,
   pageTitle
 }: {
-  initialData: Product | null;
+  initialData: Reimbursement | null;
   pageTitle: string;
 }) {
   const defaultValues = {
-    name: initialData?.name || '',
-    category: initialData?.category || '',
-    price: initialData?.price || 0,
-    description: initialData?.description || ''
+    name: initialData?.organization?.name || '',
+    reimbursementType: initialData?.reimbursementType?.name || '',
+    amount: initialData?.amount || 0,
+    description: initialData?.description || '',
+    status: initialData?.status || ''
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -94,7 +97,7 @@ export default function ProductForm({
               render={({ field }) => (
                 <div className='space-y-6'>
                   <FormItem className='w-full'>
-                    <FormLabel>Images</FormLabel>
+                    <FormLabel>Attachment</FormLabel>
                     <FormControl>
                       <FileUploader
                         value={field.value}
@@ -120,54 +123,10 @@ export default function ProductForm({
                 name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder='Enter product name' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='category'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value)}
-                      value={field.value[field.value.length - 1]}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select categories' />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value='beauty'>Beauty Products</SelectItem>
-                        <SelectItem value='electronics'>Electronics</SelectItem>
-                        <SelectItem value='clothing'>Clothing</SelectItem>
-                        <SelectItem value='home'>Home & Garden</SelectItem>
-                        <SelectItem value='sports'>
-                          Sports & Outdoors
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='price'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price</FormLabel>
+                    <FormLabel>Reimbursement</FormLabel>
                     <FormControl>
                       <Input
-                        type='number'
-                        step='0.01'
-                        placeholder='Enter price'
+                        placeholder='Enter reimbursement name'
                         {...field}
                       />
                     </FormControl>
@@ -175,6 +134,70 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name='reimbursementType'
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Reimbursement Type</FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder='Select reimbursement' />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {reimbursementType.map((value) => {
+                            return (
+                              <SelectItem value={value.name} key={value.id}>
+                                {value.name}
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+              <FormField
+                control={form.control}
+                name='amount'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        step='0.01'
+                        placeholder='Enter amount'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {initialData?.status && (
+                <FormField
+                  control={form.control}
+                  name='status'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <FormControl>
+                        <Input disabled={true} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
             <FormField
               control={form.control}
@@ -184,7 +207,7 @@ export default function ProductForm({
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder='Enter product description'
+                      placeholder='Enter description'
                       className='resize-none'
                       {...field}
                     />
@@ -193,7 +216,9 @@ export default function ProductForm({
                 </FormItem>
               )}
             />
-            <Button type='submit'>Add Product</Button>
+            <Button type='submit'>
+              {initialData ? 'Submit' : 'Add Reimbursement'}
+            </Button>
           </form>
         </Form>
       </CardContent>
