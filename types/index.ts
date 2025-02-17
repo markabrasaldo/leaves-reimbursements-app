@@ -1,4 +1,5 @@
 import { Icons } from '@/components/icons';
+import { User } from 'next-auth';
 
 export interface NavItem {
   title: string;
@@ -39,10 +40,14 @@ export interface CardItem {
 }
 
 export interface TableFilter {
-  page?: number;
-  limit?: number;
+  page: number;
+  limit: number;
   categories?: string;
   search?: string;
+}
+
+export interface UserSessionType extends User {
+  role: string;
 }
 
 export type MainNavItem = NavItemWithOptionalChildren;

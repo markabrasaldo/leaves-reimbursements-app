@@ -25,8 +25,6 @@ async function getLeaveTypes() {
 
   const leaveList = await leaves;
 
-  console.log('leaveList', leaveList);
-
   return {
     leaveTypes: [
       {

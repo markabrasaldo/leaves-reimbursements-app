@@ -1,24 +1,23 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
-import { reimbursement } from '@/constants/mock-api';
+import { fakeReimbursements } from '@/constants/mock-api';
 import { cn } from '@/lib/utils';
 import getConfig from 'next/config';
 import Link from 'next/link';
 
 // use when endpoint is available
-async function getReimbursements(organization_code: string) {
+async function getReimbursements() {
   const { publicRuntimeConfig } = getConfig();
   const baseUrl = publicRuntimeConfig.baseUrl;
-  const res = await fetch(`${baseUrl}/${organization_code}/reimbursements/`);
+  const res = await fetch(`${baseUrl}/reimbursements/`);
 
   return res.json();
 }
 
 export async function ReimbursementsList() {
-  // const data = await getReimbursements('organization_code');
+  // const data = await getReimbursements();
 
-  const reimbursementsList = await reimbursement;
+  const reimbursementsList = await fakeReimbursements.getReimbursementList();
 
   return (
     <Card>
@@ -36,7 +35,7 @@ export async function ReimbursementsList() {
       </CardHeader>
       <CardContent>
         <div className='space-y-8'>
-          {reimbursementsList.map((reimbursement) => {
+          {reimbursementsList.slice(0, 5).map((reimbursement) => {
             return (
               <div className='flex items-center' key={reimbursement.id}>
                 <div className='ml-4 space-y-1'>

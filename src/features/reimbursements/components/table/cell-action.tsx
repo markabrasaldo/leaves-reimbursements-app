@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { CircleCheckBig, Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Reimbursement } from '../../types';
@@ -23,6 +23,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
 
   const onConfirm = async () => {};
+  const isPending = data.status === 'SUBMITTED';
 
   return (
     <>
@@ -43,10 +44,18 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/product/${data.id}`)}
+            onClick={
+              () => router.push(`/dashboard/reimbursement/${data.tempId}`) // change with proper endpoint
+            }
           >
             <Edit className='mr-2 h-4 w-4' /> Update
           </DropdownMenuItem>
+          {isPending && (
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              <CircleCheckBig className='mr-2 h-4 w-4' />
+              Approve
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className='mr-2 h-4 w-4' /> Delete
           </DropdownMenuItem>

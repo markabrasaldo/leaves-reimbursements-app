@@ -2,9 +2,11 @@ import PageContainer from '@/components/layout/page-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { dashboardCardItems } from '@/constants/data';
 import { InfoCard } from '@/features/overview/components/info-card';
+import { auth } from '@/lib/auth';
 import React from 'react';
+import { UserSessionType } from 'types';
 
-export default function OverViewLayout({
+export default async function OverViewLayout({
   sales,
   pie_stats,
   bar_stats,
@@ -19,6 +21,11 @@ export default function OverViewLayout({
   employees: React.ReactNode;
   reimbursements: React.ReactNode;
 }) {
+  const session = await auth();
+
+  const role = (session?.user as UserSessionType)?.role;
+
+  console.log('role', role);
   return (
     <PageContainer>
       <div className='flex flex-1 flex-col space-y-2'>

@@ -3,12 +3,9 @@
 import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box';
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
-import {
-  CATEGORY_OPTIONS,
-  useProductTableFilters
-} from './use-product-table-filters';
+import { useTableFilters } from './use-table-filters';
 
-export default function ProductTableAction() {
+export default function ReimbursementTableAction() {
   const {
     categoriesFilter,
     setCategoriesFilter,
@@ -17,19 +14,19 @@ export default function ProductTableAction() {
     searchQuery,
     setPage,
     setSearchQuery
-  } = useProductTableFilters();
+  } = useTableFilters();
   return (
     <div className='flex flex-wrap items-center gap-4'>
       <DataTableSearch
-        searchKey='name'
+        searchKey=''
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         setPage={setPage}
       />
       <DataTableFilterBox
-        filterKey='categories'
+        filterKey='status'
         title='Categories'
-        options={CATEGORY_OPTIONS}
+        options={FILTER_OPTIONS}
         setFilterValue={setCategoriesFilter}
         filterValue={categoriesFilter}
       />
@@ -40,3 +37,11 @@ export default function ProductTableAction() {
     </div>
   );
 }
+
+export const FILTER_OPTIONS = [
+  { value: 'DRAFT', label: 'Draft' },
+  { value: 'SUBMITTED', label: 'Submitted' },
+  { value: 'APPROVED', label: 'Approved' },
+  { value: 'REJECTED', label: 'Rejected' },
+  { value: 'REIMBURSED', label: 'Reimbursed' }
+];

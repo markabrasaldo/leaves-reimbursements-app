@@ -124,6 +124,15 @@ export function FileUploader(props: FileUploaderProps) {
         return;
       }
 
+      if (
+        files?.length &&
+        acceptedFiles.length &&
+        files.some((file) => file.name === acceptedFiles[0].name)
+      ) {
+        toast.error(`Cannot upload duplicate file`);
+        return;
+      }
+
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file)

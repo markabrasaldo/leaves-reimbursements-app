@@ -9,8 +9,8 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import ProductTableAction from '@/features/products/components/product-tables/product-table-action';
 import ReimbursementListPage from '@/features/reimbursements/components/reimbursement-table-list';
+import ReimbursementTableAction from '@/features/reimbursements/components/table/reimbursement-table-action';
 
 export const metadata = {
   title: 'Dashboard: Reimbursement'
@@ -41,7 +41,7 @@ export default async function Page(props: pageProps) {
           </Link>
         </div>
         <Separator />
-        <ProductTableAction />
+        <ReimbursementTableAction />
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
