@@ -45,7 +45,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
           <DropdownMenuItem
             onClick={
-              () => router.push(`/dashboard/reimbursement/${data.tempId}`) // change with proper endpoint
+              () => router.push(`/dashboard/reimbursement/${data.id}`) // change with proper endpoint
             }
           >
             <Edit className='mr-2 h-4 w-4' /> Update

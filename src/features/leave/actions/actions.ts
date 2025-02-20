@@ -5,7 +5,5 @@ export async function submitForm(prevState: any, formData: FormData) {
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  console.log('Form submitted:', { end_date, start_date, leave_type_id });
-
   return { message: 'Form submitted successfully!' };
 }

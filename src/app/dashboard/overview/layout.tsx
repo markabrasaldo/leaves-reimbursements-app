@@ -25,7 +25,6 @@ export default async function OverViewLayout({
 
   const role = (session?.user as UserSessionType)?.role;
 
-  console.log('role', role);
   return (
     <PageContainer>
       <div className='flex flex-1 flex-col space-y-2'>

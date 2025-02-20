@@ -244,13 +244,35 @@ export function createRandomReimbursement(tempId?: number) {
       name: faker.company.name()
     },
     date: faker.date.anytime(),
-    amount: faker.finance.amount(),
+    amount: Number(faker.finance.amount()),
     status: faker.helpers.arrayElement(reimbursementStatus),
     created_at: faker.date.anytime().toISOString(),
     updated_at: faker.date.anytime().toISOString(),
     created_by: faker.string.uuid(),
     updated_by: faker.string.uuid(),
-    attachments: faker.image.avatar()
+    attachment: [
+      {
+        id: faker.string.uuid(),
+        reimbursement_application_id: faker.string.uuid(),
+        file_name: `Image-${faker.string.alphanumeric()}`,
+        file_type: 'image/png',
+        file_url: faker.image.url()
+      },
+      {
+        id: faker.string.uuid(),
+        reimbursement_application_id: faker.string.uuid(),
+        file_name: `Image-${faker.string.alphanumeric()}`,
+        file_type: 'image/png',
+        file_url: faker.image.url()
+      },
+      {
+        id: faker.string.uuid(),
+        reimbursement_application_id: faker.string.uuid(),
+        file_name: `Image-${faker.string.alphanumeric()}`,
+        file_type: 'image/png',
+        file_url: faker.image.url()
+      }
+    ]
   };
 }
 

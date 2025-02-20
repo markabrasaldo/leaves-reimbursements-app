@@ -24,7 +24,8 @@ import { reimbursementType } from '@/constants/mock-api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Reimbursement } from '../types';
+import { Attachment, Reimbursement } from '../types';
+import React from 'react';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -35,7 +36,7 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 const formSchema = z.object({
-  image: z
+  attachments: z
     .any()
     .refine((files) => files?.length == 1, 'Image is required.')
     .refine(
@@ -64,12 +65,25 @@ export default function ReimbursementForm({
   initialData: Reimbursement | null;
   pageTitle: string;
 }) {
+  const newFiles = initialData?.attachments?.map((image: Attachment) => {
+    const blob = new Blob([JSON.stringify(image, null, 2)], {
+      type: image.file_type
+    });
+
+    let file = new File([blob], image.file_name, {
+      type: image.file_type
+    });
+
+    return file;
+  });
+
   const defaultValues = {
     name: initialData?.organization?.name || '',
     reimbursementType: initialData?.reimbursementType?.name || '',
     amount: initialData?.amount || 0,
     description: initialData?.description || '',
-    status: initialData?.status || ''
+    status: initialData?.status || '',
+    attachments: newFiles
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -78,7 +92,12 @@ export default function ReimbursementForm({
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    const payload = {
+      ...initialData,
+      ...values,
+      created_by: 'temp',
+      updated_by: 'temp'
+    };
   }
 
   return (
@@ -93,32 +112,34 @@ export default function ReimbursementForm({
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormField
               control={form.control}
-              name='image'
-              render={({ field }) => (
-                <div className='space-y-6'>
-                  <FormItem className='w-full'>
-                    <FormLabel>Attachment</FormLabel>
-                    <FormControl>
-                      <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        maxFiles={4}
-                        maxSize={4 * 1024 * 1024}
-                        // disabled={loading}
-                        // progresses={progresses}
-                        // pass the onUpload function here for direct upload
-                        // onUpload={uploadFiles}
-                        // disabled={isUploading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </div>
-              )}
+              name='attachments'
+              render={({ field }) => {
+                return (
+                  <div className='space-y-6'>
+                    <FormItem className='w-full'>
+                      <FormLabel>Attachment</FormLabel>
+                      <FormControl>
+                        <FileUploader
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          maxFiles={4}
+                          maxSize={4 * 1024 * 1024}
+                          // disabled={loading}
+                          // progresses={progresses}
+                          // pass the onUpload function here for direct upload
+                          // onUpload={uploadFiles}
+                          // disabled={isUploading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </div>
+                );
+              }}
             />
 
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name='name'
                 render={({ field }) => (
@@ -133,7 +154,7 @@ export default function ReimbursementForm({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <FormField
                 control={form.control}
                 name='reimbursementType'
