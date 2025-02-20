@@ -28,7 +28,7 @@ interface LeaveFormProps {
 }
 
 export function LeaveForm({ initialLeaveTypes }: LeaveFormProps) {
-  const [state, formAction, pending] = useActionState(submitForm, {
+  const [_state, formAction, _pending] = useActionState(submitForm, {
     message: ''
   });
 

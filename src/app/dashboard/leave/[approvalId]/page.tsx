@@ -6,8 +6,6 @@ import { LeaveApprovalCard } from '@/features/leave/components/leave-approval-ca
 import { Suspense } from 'react';
 
 async function getLeaveTypes() {
-  // const data = await getLeaveList();
-
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const leaveList = await leaves;
