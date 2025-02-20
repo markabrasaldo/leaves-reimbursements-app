@@ -14,7 +14,6 @@ export async function GET(
     }
 
     const data = await response.json();
-    console.log('hatdogs');
 
     return NextResponse.json(data);
   } catch (error) {

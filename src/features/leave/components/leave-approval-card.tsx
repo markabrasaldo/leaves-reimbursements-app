@@ -37,8 +37,8 @@ export function LeaveApprovalCard({ data }: { data: LeaveApprovalCardProps }) {
     });
   };
 
-  const handleApprove = () => console.log('approved');
-  const handleReject = () => console.log('rejected');
+  const handleApprove = () => {};
+  const handleReject = () => {};
 
   return (
     <>
