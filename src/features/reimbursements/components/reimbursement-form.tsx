@@ -77,9 +77,7 @@ export default function ReimbursementForm({
     values: defaultValues
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  function onSubmit(values: z.infer<typeof formSchema>) {}
 
   return (
     <Card className='mx-auto w-full'>
