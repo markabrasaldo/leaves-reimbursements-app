@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { FileUploader } from '@/components/file-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +21,10 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { reimbursementType } from '@/constants/mock-api';
+import {
+  ReimbursementType,
+  useReimbursementStore
+} from '../utils/reimbursement-store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -59,9 +63,11 @@ const formSchema = z.object({
 });
 
 export default function ReimbursementForm({
+  reimbursementTypesData,
   initialData,
   pageTitle
 }: {
+  reimbursementTypesData: ReimbursementType[];
   initialData: Reimbursement | null;
   pageTitle: string;
 }) {
@@ -99,6 +105,13 @@ export default function ReimbursementForm({
       updated_by: 'temp'
     };
   }
+
+  const { reimbursementTypes, initializeReimbursementTypes } =
+    useReimbursementStore();
+
+  useEffect(() => {
+    initializeReimbursementTypes(reimbursementTypesData);
+  }, [reimbursementTypesData, initializeReimbursementTypes]);
 
   return (
     <Card className='mx-auto w-full'>
@@ -156,7 +169,7 @@ export default function ReimbursementForm({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {reimbursementType.map((value) => {
+                          {reimbursementTypes?.map((value) => {
                             return (
                               <SelectItem value={value.name} key={value.id}>
                                 {value.name}

@@ -9,13 +9,33 @@ export const metadata = {
 
 type PageProps = { params: Promise<{ reimbursementId: string }> };
 
+async function getReimbursementTypes() {
+  const response = await fetch('http://localhost:3000/api/reimbursement-type', {
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch leave types');
+  }
+
+  return response.json();
+}
+
 export default async function Page(props: PageProps) {
+  const reimbursementTypesData = await getReimbursementTypes();
   const params = await props.params;
+
   return (
     <PageContainer scrollable>
       <div className='flex-1 space-y-4'>
         <Suspense fallback={<FormCardSkeleton />}>
-          <ReimbursementViewPage reimbursementId={params.reimbursementId} />
+          <ReimbursementViewPage
+            reimbursementTypesData={reimbursementTypesData}
+            reimbursementId={params.reimbursementId}
+          />
         </Suspense>
       </div>
     </PageContainer>
