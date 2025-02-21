@@ -77,8 +77,10 @@ export default async function ReimbursementListPage() {
   const totalReimbursements = data.total_reimbursements;
   const reimbursements: Reimbursement[] = data.reimbursements;
 
+  console.log('reimbursements', reimbursements);
   return (
     <ReimbursementTable
+      data-testid='reimbursement-table'
       columns={columns}
       data={reimbursements}
       totalItems={totalReimbursements}

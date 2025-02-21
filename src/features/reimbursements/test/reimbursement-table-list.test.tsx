@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { getByTestId, render, screen, waitFor } from '@testing-library/react';
 import ReimbursementListPage from '../components/reimbursement-table-list';
 import { jest } from '@jest/globals';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { GET } from '@/app/api/(reimbursement)/[organizationCode]/reimbursement/route';
+import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 jest.mock('../../../lib/searchparams', () => jest.fn());
 //@ts-ignore
@@ -20,7 +21,7 @@ jest.mock('../components/reimbursement-table-list');
 jest.mock('../components/table/reimbursement-table-action');
 
 jest.mock('next/navigation', () => ({
-  useRouter: jest.fn().mockReturnValue({ route: '/home' })
+  useRouter: jest.fn()
 }));
 
 async function generateSearchParams(value: {
@@ -65,7 +66,7 @@ describe('Testing Reimbursement Table', () => {
     global.fetch = originalFetch;
   });
 
-  it('it shoud fetch reimbursement list', async () => {
+  it('it should fetch reimbursement list', async () => {
     //@ts-ignore
     global.fetch = jest.fn(() =>
       Promise.resolve({
@@ -84,25 +85,31 @@ describe('Testing Reimbursement Table', () => {
     //   .mockReturnValue({
     //     push: routerPushMock
     //   });
-    // const component = await ReimbursementListPage();
+    const component = await ReimbursementListPage();
 
-    // render(component, {
-    //   wrapper: ({ children }) => {
-    //     return (
-    //       <NuqsTestingAdapter searchParams='?page=1'>
-    //         {children}
-    //       </NuqsTestingAdapter>
-    //     );
-    //   }
-    // });
+    render(component, {
+      wrapper: ({ children }) => {
+        return (
+          <NuqsTestingAdapter searchParams='?page=1'>
+            <AppRouterContext value={null}>{children}</AppRouterContext>
+          </NuqsTestingAdapter>
+        );
+      }
+    });
 
-    const { container } = render(
-      <Suspense>
-        <ReimbursementListPage />
-      </Suspense>
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
+      /Reimbursements/i
     );
 
-    // expect(screen.getByRole('table')).toBeInTheDocument();
+    // const { container } = render(
+    //   <Suspense>
+    //     <ReimbursementListPage />
+    //   </Suspense>
+    // );
+
+    expect(
+      getByTestId(document.documentElement, 'reimbursement-table')
+    ).toBeInTheDocument();
 
     // expect(global.fetch).toHaveBeenCalledWith(
     //   'http://localhost:3000/api/ORG001/reimbursement'

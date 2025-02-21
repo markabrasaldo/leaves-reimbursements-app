@@ -139,22 +139,6 @@ export default function ReimbursementForm({
             />
 
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-              {/* <FormField
-                control={form.control}
-                name='name'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Reimbursement</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Enter reimbursement name'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
               <FormField
                 control={form.control}
                 name='reimbursementType'
@@ -220,23 +204,6 @@ export default function ReimbursementForm({
                 />
               )}
             </div>
-            <FormField
-              control={form.control}
-              name='description'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder='Enter description'
-                      className='resize-none'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <Button type='submit'>
               {initialData ? 'Submit' : 'Add Reimbursement'}
             </Button>
