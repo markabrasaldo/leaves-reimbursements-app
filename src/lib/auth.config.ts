@@ -16,6 +16,9 @@ const authConfig = {
         },
         password: {
           type: 'password'
+        },
+        role: {
+          type: 'text'
         }
       },
 
@@ -29,17 +32,22 @@ const authConfig = {
             password: z
               .string()
               .trim()
-              .min(6, { message: 'Minimum of 6 characters or digits' })
+              .min(6, { message: 'Minimum of 6 characters or digits' }),
+            role: z.enum(['user', 'admin'], {
+              required_error: 'Role is required',
+              invalid_type_error: 'Role must be either user or admin'
+            })
           })
           .safeParse(credentials);
 
         if (parsedCredentials.success) {
-          const { email } = parsedCredentials.data;
+          const { email, role } = parsedCredentials.data;
 
           const user = {
             id: '1',
-            role: 'Admin',
-            email: email as string
+            name: 'John',
+            email: email as string,
+            role: role
           };
 
           // Any object returned will be saved in `user` property of the JWT
@@ -70,8 +78,17 @@ const authConfig = {
       }
       return true;
     },
-    session({ session, token }) {
-      return { ...session, ...token };
+    jwt: async ({ token, user }) => {
+      if (user) {
+        token.role = user.role;
+      }
+      return token;
+    },
+    session: async ({ session, token }) => {
+      if (session?.user && token) {
+        session.user.role = token.role as string | undefined;
+      }
+      return session;
     }
   }
 } satisfies NextAuthConfig;

@@ -32,6 +32,8 @@ export interface FooterItem {
 }
 
 export interface CardItem {
+  cardButton?: boolean;
+  cardButtonText?: string;
   cardTitle: string;
   cardValue: string | number | undefined;
   cardIcon: keyof typeof Icons;
