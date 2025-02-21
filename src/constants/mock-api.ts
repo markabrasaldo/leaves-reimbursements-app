@@ -300,9 +300,13 @@ const leaveType = [
 
 const leaveStatus = ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED', 'CANCELED'];
 
+let idCounter = 1;
+
 export function createRandomLeaves() {
+  const idNumber = idCounter++;
+
   return {
-    id: faker.string.uuid(),
+    id: idNumber,
     name: faker.helpers.arrayElement(reimbursementType),
     leave_type: {
       leave_type_id: faker.string.uuid(),
@@ -320,6 +324,7 @@ export function createRandomLeaves() {
       .between({ from: '2022-01-01', to: '2023-12-31' })
       .toISOString(),
     days_applied: faker.number.int(12),
+    reason: faker.lorem.sentence(),
     status: faker.helpers.arrayElement(leaveStatus)
   };
 }

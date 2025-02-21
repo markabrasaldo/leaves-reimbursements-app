@@ -40,7 +40,6 @@ export async function LeavesList() {
       <CardContent>
         <div className='space-y-8'>
           {leaveList.slice(0, 5).map((leave) => {
-            console.log(leave);
             return (
               <div className='flex items-center' key={leave.id}>
                 <div className='ml-4 space-y-1'>

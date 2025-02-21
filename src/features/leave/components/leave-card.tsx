@@ -14,16 +14,13 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 import { LeaveForm } from './leave-form';
+import { LeaveType } from '../utils/leave-store';
 
-type LeaveType = {
-  id: string;
-  name: string;
-  color: string;
-  description: string;
-  icon: string;
-};
+interface LeaveCardProps {
+  initialLeaveTypes: LeaveType[];
+}
 
-export function LeaveCard({ data }: { data: Array<LeaveType> }) {
+export function LeaveCard({ initialLeaveTypes }: LeaveCardProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -100,7 +97,7 @@ export function LeaveCard({ data }: { data: Array<LeaveType> }) {
             <DialogHeader>
               <DialogTitle>Request Leave</DialogTitle>
             </DialogHeader>
-            <LeaveForm data={data} />
+            <LeaveForm initialLeaveTypes={initialLeaveTypes} />
           </DialogContent>
         </Dialog>
       </div>

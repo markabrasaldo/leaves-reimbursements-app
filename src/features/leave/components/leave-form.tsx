@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Umbrella, Stethoscope, User } from 'lucide-react';
 import { submitForm } from '../actions/actions';
+import { LeaveType, useLeaveStore } from '../utils/leave-store';
 
 const iconMap = {
   Umbrella,
@@ -22,21 +23,23 @@ const iconMap = {
   User
 };
 
-type LeaveType = {
-  id: string;
-  name: string;
-  color: string;
-  description: string;
-  icon: string;
-};
+interface LeaveFormProps {
+  initialLeaveTypes: LeaveType[];
+}
 
-export function LeaveForm({ data }: { data: Array<LeaveType> }) {
-  const [selectedLeaveType, setSelectedLeaveType] = useState('');
-  const [state, formAction, pending] = useActionState(submitForm, {
+export function LeaveForm({ initialLeaveTypes }: LeaveFormProps) {
+  const [_state, formAction, _pending] = useActionState(submitForm, {
     message: ''
   });
 
+  const { selectedLeave, leaveTypes, setSelectedLeave, initializeLeaveTypes } =
+    useLeaveStore();
+
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    initializeLeaveTypes(initialLeaveTypes);
+  }, [initialLeaveTypes, initializeLeaveTypes]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
@@ -46,7 +49,7 @@ export function LeaveForm({ data }: { data: Array<LeaveType> }) {
   }, []);
 
   const handleSubmit = (formData: FormData) => {
-    formData.append('leaveType', selectedLeaveType);
+    formData.append('leaveType', selectedLeave);
     formAction(formData);
   };
 
@@ -59,15 +62,12 @@ export function LeaveForm({ data }: { data: Array<LeaveType> }) {
 
       <div className='space-y-4'>
         {isMobile ? (
-          <Select
-            onValueChange={setSelectedLeaveType}
-            value={selectedLeaveType}
-          >
+          <Select onValueChange={setSelectedLeave} value={selectedLeave}>
             <SelectTrigger className='w-full'>
               <SelectValue placeholder='Select leave type' />
             </SelectTrigger>
             <SelectContent>
-              {data.map((leaveType) => (
+              {leaveTypes.map((leaveType) => (
                 <SelectItem key={leaveType.id} value={leaveType.id}>
                   {leaveType.name}
                 </SelectItem>
@@ -76,18 +76,16 @@ export function LeaveForm({ data }: { data: Array<LeaveType> }) {
           </Select>
         ) : (
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-            {data.map((leaveType) => {
+            {leaveTypes.map((leaveType) => {
               const Icon = iconMap[leaveType.icon as keyof typeof iconMap];
 
               return (
                 <Card
                   key={leaveType.id}
                   className={`cursor-pointer transition-all ${
-                    selectedLeaveType === leaveType.id
-                      ? 'ring-2 ring-primary'
-                      : ''
+                    selectedLeave === leaveType.id ? 'ring-2 ring-primary' : ''
                   }`}
-                  onClick={() => setSelectedLeaveType(leaveType.id)}
+                  onClick={() => setSelectedLeave(leaveType.id)}
                 >
                   <CardContent className='flex h-full flex-col items-center justify-between p-2 sm:p-4'>
                     <div className='mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary sm:h-12 sm:w-12'>
@@ -150,7 +148,7 @@ export function LeaveForm({ data }: { data: Array<LeaveType> }) {
           </div>
         </div>
       </div>
-      <Button type='submit' className='w-full' disabled={!selectedLeaveType}>
+      <Button type='submit' className='w-full' disabled={!selectedLeave}>
         Submit Leave Request
       </Button>
     </form>
