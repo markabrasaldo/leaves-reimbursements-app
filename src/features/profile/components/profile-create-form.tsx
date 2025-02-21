@@ -89,9 +89,7 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({
     try {
       setLoading(true);
       if (initialData) {
-        // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
       } else {
-        // const res = await axios.post(`/api/products/create-product`, data);
       }
       router.refresh();
       router.push(`/dashboard/products`);
@@ -116,8 +114,6 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({
 
   const processForm: SubmitHandler<ProfileFormValues> = (data) => {
     setData(data);
-    // api call and reset
-    // form.reset();
   };
 
   type FieldName = keyof ProfileFormValues;

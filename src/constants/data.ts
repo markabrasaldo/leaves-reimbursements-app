@@ -152,8 +152,48 @@ export const dashboardCardItems: CardItem[] = [
     trending: 'up'
   },
   {
-    cardTitle: 'Over Time',
+    cardTitle: 'Total Reimbursements',
     cardValue: 1000,
+    cardIcon: 'clockAlert',
+    cardSubText: `${'6%'} Last Month`,
+    trending: 'up'
+  }
+  // {
+  //   cardTitle: 'Early Out',
+  //   cardValue: 6,
+  //   cardIcon: 'clockArrowDown',
+  //   cardSubText: `${'8%'} Last Month`,
+  //   trending: 'up'
+  // }
+];
+
+export const userCardItems: CardItem[] = [
+  {
+    cardTitle: 'Available Leaves',
+    cardValue: 60,
+    cardIcon: 'logo',
+    cardSubText: `${'5%'} Last Month`,
+    cardButton: true,
+    cardButtonText: 'Apply',
+    trending: 'up'
+  },
+  {
+    cardTitle: 'Pending Requests',
+    cardValue: 2,
+    cardIcon: 'userPlus',
+    cardSubText: `${'1%'} Last Month`,
+    trending: 'up'
+  },
+  {
+    cardTitle: 'Approved Requests',
+    cardValue: 5,
+    cardIcon: 'leave',
+    cardSubText: `${'1%'} Last Month`,
+    trending: 'up'
+  },
+  {
+    cardTitle: 'Reimbursements',
+    cardValue: 250,
     cardIcon: 'clockAlert',
     cardSubText: `${'6%'} Last Month`,
     trending: 'up'

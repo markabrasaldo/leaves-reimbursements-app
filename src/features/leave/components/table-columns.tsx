@@ -3,11 +3,12 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type LeaveData = {
   days_applied: number;
   end_date: string;
-  id: string;
+  id: number;
   leave_type: {
     leave_type_id: string;
     code: string;
@@ -66,6 +67,17 @@ export const columns: ColumnDef<LeaveData>[] = [
           Name
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const name = row.original.name.name;
+      return (
+        <Link
+          href={`/dashboard/leave/${row.original.id}`}
+          className='underline'
+        >
+          {name}
+        </Link>
       );
     }
   },

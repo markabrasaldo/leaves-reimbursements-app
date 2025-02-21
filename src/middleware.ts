@@ -10,7 +10,6 @@ import { cookies } from 'next/headers';
 const { auth } = NextAuth(authConfig);
 
 const protectedRoutes = ['/dashboard'];
-// const publicRoutes = ['/login', '/signup', '/'];
 
 export default auth(async (request: NextRequest) => {
   const path = request.nextUrl.pathname.split('/')[1];

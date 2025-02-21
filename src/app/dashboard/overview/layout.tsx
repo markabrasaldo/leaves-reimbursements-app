@@ -1,6 +1,5 @@
 import PageContainer from '@/components/layout/page-container';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { dashboardCardItems } from '@/constants/data';
+import { dashboardCardItems, userCardItems } from '@/constants/data';
 import { InfoCard } from '@/features/overview/components/info-card';
 import { auth } from '@/lib/auth';
 import React from 'react';
@@ -12,7 +11,8 @@ export default async function OverViewLayout({
   bar_stats,
   area_stats,
   employees,
-  reimbursements
+  reimbursements,
+  leaves
 }: {
   sales: React.ReactNode;
   pie_stats: React.ReactNode;
@@ -20,10 +20,13 @@ export default async function OverViewLayout({
   area_stats: React.ReactNode;
   employees: React.ReactNode;
   reimbursements: React.ReactNode;
+  leaves: React.ReactNode;
 }) {
   const session = await auth();
 
   const role = (session?.user as UserSessionType)?.role;
+
+  const isAdmin = role === 'admin';
 
   return (
     <PageContainer>
@@ -34,9 +37,22 @@ export default async function OverViewLayout({
           </h2>
         </div>
         <div className='grid gap-4 overflow-x-auto md:grid-cols-2 lg:grid-cols-4'>
-          {dashboardCardItems.map((item, key) => {
-            return <InfoCard {...item} key={key} />;
-          })}
+          {isAdmin ? (
+            <>
+              {dashboardCardItems.map((item, key) => {
+                return <InfoCard {...item} key={key} />;
+              })}
+            </>
+          ) : (
+            <>
+              {userCardItems.map((item, key) => {
+                return <InfoCard {...item} key={key} />;
+              })}
+            </>
+          )}
+
+          {/* User  */}
+
           {/* <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
@@ -140,8 +156,20 @@ export default async function OverViewLayout({
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
           {/* <div className='col-span-4'>{bar_stats}</div> */}
           {/* <div className='col-span-4 md:col-span-3'>{sales}</div> */}
-          <div className='col-span-4'>{reimbursements}</div>
-          <div className='col-span-4 md:col-span-3'>{employees}</div>
+
+          {isAdmin ? (
+            <>
+              <div className='col-span-4'>{reimbursements}</div>
+              <div className='col-span-4 md:col-span-3'>{leaves}</div>
+              <div className='col-span-4'>{employees}</div>
+            </>
+          ) : (
+            <>
+              <div className='col-span-4'>{reimbursements}</div>
+              <div className='col-span-4 md:col-span-3'>{leaves}</div>
+            </>
+          )}
+
           {/* <div className='col-span-4'>{area_stats}</div>
           <div className='col-span-4 md:col-span-3'>{pie_stats}</div> */}
         </div>
