@@ -17,8 +17,8 @@
     "format:check": "prettier -c -w .",
     "prepare": "husky",
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
-    "test:watch": "jest --watch",
-    "test-reimbursement-table": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest reimbursement-table-list.test.tsx"
+    "test:watch": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest --watch",
+    "test-reimbursement-list": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest reimbursement-table-list.test.tsx"
   },
   "lint-staged": {
     "**/*.{js,jsx,tsx,ts,css,less,scss,sass}": [
@@ -70,6 +70,7 @@
     "motion": "^11.17.0",
     "next": "15.1.0",
     "next-auth": "^5.0.0-beta.25",
+    "next-router-mock": "^0.9.13",
     "next-themes": "^0.4.4",
     "nextjs-toploader": "^3.7.15",
     "nuqs": "^2.2.3",
