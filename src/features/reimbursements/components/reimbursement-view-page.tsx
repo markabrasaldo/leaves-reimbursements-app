@@ -1,9 +1,11 @@
-import { delay, fakeReimbursements } from '@/constants/mock-api';
+import { fakeReimbursements } from '@/constants/mock-api';
 import { notFound } from 'next/navigation';
 import ReimbursementForm from './reimbursement-form';
 import { Reimbursement } from '../types';
+import { ReimbursementType } from '../utils/reimbursement-store';
 
 type TReimbursementViewPageProps = {
+  reimbursementTypesData: ReimbursementType[];
   reimbursementId: string;
 };
 
@@ -23,6 +25,7 @@ async function getReimbursements(reimbursementId: number) {
 }
 
 export default async function TReimbursementViewPageProps({
+  reimbursementTypesData,
   reimbursementId
 }: TReimbursementViewPageProps) {
   let reimbursement = null;
@@ -41,6 +44,10 @@ export default async function TReimbursementViewPageProps({
 
   //change form
   return (
-    <ReimbursementForm initialData={reimbursement} pageTitle={pageTitle} />
+    <ReimbursementForm
+      reimbursementTypesData={reimbursementTypesData}
+      initialData={reimbursement}
+      pageTitle={pageTitle}
+    />
   );
 }
