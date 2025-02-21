@@ -9,14 +9,14 @@ export const columns: ColumnDef<Reimbursement>[] = [
     accessorKey: 'organization',
     header: 'Organization',
     cell: ({ row }) => {
-      return row.original.organization.name;
+      return row.original.organization_id;
     }
   },
   {
     accessorKey: 'reimbursementType',
     header: 'Reimbursement Type',
     cell: ({ row }) => {
-      return row.original.reimbursementType.name;
+      return row.original.reimbursement_type_code;
     }
   },
   {
