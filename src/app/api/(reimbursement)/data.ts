@@ -1,8 +1,14 @@
 export const mockReimbursementList = [
   {
     id: '1f70f8a3-4041-4c13-82a0-2b10639d257a',
-    organization_id: 'b39eddb6-dbe3-4822-8f23-361d6d4e3bdb',
-    reimbursement_type_code: 'food-0637a',
+    organization: {
+      id: 'b39eddb6-dbe3-4822-8f23-361d6d4e3bdba',
+      name: 'Organization Name A'
+    },
+    reimbursement_type: {
+      code: 'travel-37d77',
+      name: 'Travel Allowance'
+    },
     date: '2025-02-01T00:00:00Z',
     amount: 123456.0,
     status: 'DRAFT',
@@ -24,8 +30,14 @@ export const mockReimbursementList = [
   },
   {
     id: '1f70f8a3-4041-4c13-82a0-2b10639d257b',
-    organization_id: 'b39eddb6-dbe3-4822-8f23-361d6d4e3bdb',
-    reimbursement_type_code: 'food-0637a',
+    organization: {
+      id: 'b39eddb6-dbe3-4822-8f23-361d6d4e3bdb',
+      name: 'Organization Name B'
+    },
+    reimbursement_type: {
+      code: 'food-0637a',
+      name: 'Food Allowance'
+    },
     date: '2025-02-01T00:00:00Z',
     amount: 123456.0,
     status: 'SUBMITTED',
@@ -47,8 +59,14 @@ export const mockReimbursementList = [
   },
   {
     id: '1f70f8a3-4041-4c13-82a0-2b10639d257c',
-    organization_id: 'b39eddb6-dbe3-4822-8f23-361d6d4e3bdb',
-    reimbursement_type_code: 'food-0637a',
+    organization: {
+      id: 'b39eddb6-dbe3-4822-8f23-361d6d4e3bdc',
+      name: 'Organization Name C'
+    },
+    reimbursement_type: {
+      code: 'food-0637a',
+      name: 'Food Allowance'
+    },
     date: '2025-02-01T00:00:00Z',
     amount: 123456.0,
     status: 'REJECTED',

@@ -10,12 +10,15 @@ export const metadata = {
 type PageProps = { params: Promise<{ reimbursementId: string }> };
 
 async function getReimbursementTypes() {
-  const response = await fetch('http://localhost:3000/api/reimbursement-type', {
-    cache: 'no-store',
-    headers: {
-      'Content-Type': 'application/json'
+  const response = await fetch(
+    'http://localhost:3000/api/ORG001/reimbursement-type',
+    {
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     }
-  });
+  );
 
   if (!response.ok) {
     throw new Error('Failed to fetch leave types');

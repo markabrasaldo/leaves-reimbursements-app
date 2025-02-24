@@ -24,16 +24,19 @@ export function UserNav() {
                 src={session.user?.image ?? ''}
                 alt={session.user?.name ?? ''}
               />
-              <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
+              {/* <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback> */}
+              <AvatarFallback>
+                {session?.user?.email?.slice(0, 2)?.toUpperCase() || 'CN'}
+              </AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-56' align='end' forceMount>
           <DropdownMenuLabel className='font-normal'>
             <div className='flex flex-col space-y-1'>
-              <p className='text-sm font-medium leading-none'>
+              {/* <p className='text-sm font-medium leading-none'>
                 {session.user?.name}
-              </p>
+              </p> */}
               <p className='text-xs leading-none text-muted-foreground'>
                 {session.user?.email}
               </p>
@@ -53,7 +56,6 @@ export function UserNav() {
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>

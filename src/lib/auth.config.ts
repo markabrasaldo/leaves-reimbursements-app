@@ -44,8 +44,6 @@ const authConfig = {
           const { email, role } = parsedCredentials.data;
 
           const user = {
-            id: '1',
-            name: 'John',
             email: email as string,
             role: role
           };

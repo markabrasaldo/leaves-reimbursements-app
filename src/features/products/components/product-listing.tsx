@@ -11,7 +11,7 @@ export default async function ProductListingPage({}: ProductListingPage) {
   const page = searchParamsCache.get('page');
   const search = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
-  const categories = searchParamsCache.get('categories');
+  const categories = searchParamsCache.get('status');
 
   const filters = {
     page,

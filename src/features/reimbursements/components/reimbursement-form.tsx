@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { startTransition, useActionState, useEffect, useRef } from 'react';
 import { FileUploader } from '@/components/file-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import {
   ReimbursementType,
   useReimbursementStore
@@ -30,37 +29,10 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Attachment, Reimbursement } from '../types';
 import React from 'react';
-
-const MAX_FILE_SIZE = 5000000;
-const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp'
-];
-
-const formSchema = z.object({
-  attachments: z
-    .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
-    .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
-    ),
-  name: z.string().min(2, {
-    message: 'Name must be at least 2 characters.'
-  }),
-  reimbursementType: z.string(),
-  amount: z.number(),
-  status: z.string(),
-  description: z.string().min(10, {
-    message: 'Description must be at least 10 characters.'
-  })
-});
+import { submitForm } from '../actions/form';
+import { schema } from '../actions/schema';
+import { toast } from 'sonner';
+import { redirect } from 'next/navigation';
 
 export default function ReimbursementForm({
   reimbursementTypesData,
@@ -85,26 +57,30 @@ export default function ReimbursementForm({
 
   const defaultValues = {
     name: initialData?.organization?.name || '',
-    reimbursementType: initialData?.reimbursementType?.name || '',
+    reimbursementType: initialData?.reimbursement_type?.code || '',
     amount: initialData?.amount || 0,
     description: initialData?.description || '',
     status: initialData?.status || '',
     attachments: newFiles
   };
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     values: defaultValues
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const payload = {
-      ...initialData,
-      ...values,
-      created_by: 'temp',
-      updated_by: 'temp'
-    };
-  }
+  const [state, formAction, isPending] = useActionState(
+    submitForm,
+    defaultValues
+  );
+
+  useEffect(() => {
+    if (state?.status === 'ok') {
+      toast.success(state?.message);
+
+      redirect(`/dashboard/reimbursement`);
+    }
+  }, [state]);
 
   const { reimbursementTypes, initializeReimbursementTypes } =
     useReimbursementStore();
@@ -112,6 +88,22 @@ export default function ReimbursementForm({
   useEffect(() => {
     initializeReimbursementTypes(reimbursementTypesData);
   }, [reimbursementTypesData, initializeReimbursementTypes]);
+
+  const onProcessReimbursement =
+    ['APPROVED', 'REJECTED', 'REIMBURSED'].includes(
+      initialData?.status as string
+    ) || initialData?.status === 'SUBMITTED';
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.trigger();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
 
   return (
     <Card className='mx-auto w-full'>
@@ -122,7 +114,7 @@ export default function ReimbursementForm({
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+          <form ref={formRef} onSubmit={handleFormSubmit} className='space-y-8'>
             <FormField
               control={form.control}
               name='attachments'
@@ -137,6 +129,7 @@ export default function ReimbursementForm({
                           onValueChange={field.onChange}
                           maxFiles={4}
                           maxSize={4 * 1024 * 1024}
+                          register={form.register('attachments')}
                           // disabled={loading}
                           // progresses={progresses}
                           // pass the onUpload function here for direct upload
@@ -150,7 +143,6 @@ export default function ReimbursementForm({
                 );
               }}
             />
-
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <FormField
                 control={form.control}
@@ -162,6 +154,9 @@ export default function ReimbursementForm({
                       <Select
                         onValueChange={(value) => field.onChange(value)}
                         value={field.value}
+                        {...form.register('reimbursementType', {
+                          required: true
+                        })}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -171,7 +166,7 @@ export default function ReimbursementForm({
                         <SelectContent>
                           {reimbursementTypes?.map((value) => {
                             return (
-                              <SelectItem value={value.name} key={value.id}>
+                              <SelectItem value={value.code} key={value.code}>
                                 {value.name}
                               </SelectItem>
                             );
@@ -192,7 +187,7 @@ export default function ReimbursementForm({
                     <FormControl>
                       <Input
                         type='number'
-                        step='0.01'
+                        min={0}
                         placeholder='Enter amount'
                         {...field}
                       />
@@ -217,9 +212,23 @@ export default function ReimbursementForm({
                 />
               )}
             </div>
-            <Button type='submit'>
-              {initialData ? 'Submit' : 'Add Reimbursement'}
-            </Button>
+            <div className='space-x-2'>
+              {initialData?.status === 'SUBMITTED' && (
+                <>
+                  <Button type='submit'>Approve</Button>
+                  <Button type='submit'>Reject</Button>
+                </>
+              )}
+              {!onProcessReimbursement && (
+                <Button type='submit' disabled={isPending}>
+                  {isPending
+                    ? 'Please wait ...'
+                    : initialData
+                      ? 'Submit'
+                      : 'Add Reimbursement'}
+                </Button>
+              )}
+            </div>
           </form>
         </Form>
       </CardContent>

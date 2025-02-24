@@ -2,30 +2,28 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Reimbursement } from '../../types';
-import { Icons } from '@/components/icons';
+import { format } from 'date-fns';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export const columns: ColumnDef<Reimbursement>[] = [
-  {
-    accessorKey: 'organization',
-    header: 'Organization',
-    cell: ({ row }) => {
-      return row.original.organization_id;
-    }
-  },
   {
     accessorKey: 'reimbursementType',
     header: 'Reimbursement Type',
     cell: ({ row }) => {
-      return row.original.reimbursement_type_code;
+      return (
+        <Link
+          href={`/dashboard/reimbursement/${row.original.id}`}
+          className={cn(
+            buttonVariants({ variant: 'link' }),
+            'mt-0 space-y-0 p-0 text-inherit underline underline-offset-4'
+          )}
+        >
+          {row.original.reimbursement_type.name}
+        </Link>
+      );
     }
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status'
-  },
-  {
-    accessorKey: 'date',
-    header: 'Date Initiated'
   },
   {
     accessorKey: 'amount',
@@ -35,14 +33,22 @@ export const columns: ColumnDef<Reimbursement>[] = [
     }
   },
   {
-    accessorKey: 'attachments',
-    header: 'Attachments',
+    accessorKey: 'date',
+    header: 'Date Initiated',
     cell: ({ row }) => {
-      const Icon = Icons['download'];
-      // const attachments = row.original.attachments // to download?
-
-      return <Icon />;
+      return format(row.original.date, 'MM/dd/yyyy');
     }
+  },
+  {
+    accessorKey: 'organization',
+    header: 'Organization',
+    cell: ({ row }) => {
+      return row.original.organization.name;
+    }
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status'
   },
   {
     id: 'actions',

@@ -153,13 +153,14 @@ export default function AppSidebar() {
                       alt={session?.user?.name || ''}
                     />
                     <AvatarFallback className='rounded-lg'>
-                      {session?.user?.name?.slice(0, 2)?.toUpperCase() || 'CN'}
+                      {/* {session?.user?.name?.slice(0, 2)?.toUpperCase() || 'CN'} */}
+                      {session?.user?.email?.slice(0, 2)?.toUpperCase() || 'CN'}
                     </AvatarFallback>
                   </Avatar>
                   <div className='grid flex-1 text-left text-sm leading-tight'>
-                    <span className='truncate font-semibold'>
+                    {/* <span className='truncate font-semibold'>
                       {session?.user?.name || ''}
-                    </span>
+                    </span> */}
                     <span className='truncate text-xs'>
                       {session?.user?.email || ''}
                     </span>
@@ -181,16 +182,17 @@ export default function AppSidebar() {
                         alt={session?.user?.name || ''}
                       />
                       <AvatarFallback className='rounded-lg'>
-                        {session?.user?.name?.slice(0, 2)?.toUpperCase() ||
+                        {/* {session?.user?.name?.slice(0, 2)?.toUpperCase() ||
+                          'CN'} */}
+                        {session?.user?.email?.slice(0, 2)?.toUpperCase() ||
                           'CN'}
                       </AvatarFallback>
                     </Avatar>
                     <div className='grid flex-1 text-left text-sm leading-tight'>
-                      <span className='truncate font-semibold'>
+                      {/* <span className='truncate font-semibold'>
                         {session?.user?.name || ''}
-                      </span>
+                      </span> */}
                       <span className='truncate text-xs'>
-                        {' '}
                         {session?.user?.email || ''}
                       </span>
                     </div>
@@ -198,7 +200,7 @@ export default function AppSidebar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
-                <DropdownMenuGroup>
+                {/* <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <BadgeCheck />
                     Account
@@ -212,7 +214,7 @@ export default function AppSidebar() {
                     Notifications
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator /> */}
                 <form action={formAction}>
                   <DropdownMenuItem>
                     <Button

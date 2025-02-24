@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import ReimbursementForm from './reimbursement-form';
 import { Reimbursement } from '../types';
 import { ReimbursementType } from '../utils/reimbursement-store';
+import getConfig from 'next/config';
 
 type TReimbursementViewPageProps = {
   reimbursementTypesData: ReimbursementType[];
@@ -10,9 +11,12 @@ type TReimbursementViewPageProps = {
 
 async function getReimbursementById(reimbursementId: string) {
   try {
+    const { publicRuntimeConfig } = getConfig();
+    const baseUrl = publicRuntimeConfig.baseUrl;
+
     const response = await fetch(
       // `${baseUrl}/${organization_code}/reimbursement/${reimbursementId}` // when endpoint is available
-      `http://localhost:3000/api/ORG001/reimbursement/${reimbursementId}`
+      `${baseUrl}/api/ORG001/reimbursement/${reimbursementId}`
     );
 
     const reimbursement = await response.json();

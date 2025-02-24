@@ -42,10 +42,7 @@ export interface CardItem {
 }
 
 export interface TableFilter {
-  page: number;
-  limit: number;
-  categories?: string;
-  search?: string;
+  [key: string]: string | number;
 }
 
 export interface UserSessionType extends User {

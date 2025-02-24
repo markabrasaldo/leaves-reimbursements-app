@@ -1,5 +1,3 @@
-import { NextResponse } from 'next/server';
-
 const reimbusrsementTypes = [
   {
     id: '75ca5949-fe2f-4200-aa88-af9e277d7482',
@@ -19,5 +17,5 @@ const reimbusrsementTypes = [
 
 export async function GET() {
   await new Promise((resolve) => setTimeout(resolve, 500));
-  return NextResponse.json(reimbusrsementTypes);
+  return Response.json(reimbusrsementTypes);
 }

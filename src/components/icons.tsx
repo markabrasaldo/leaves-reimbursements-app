@@ -1,4 +1,3 @@
-import { reimbursement } from '@/constants/mock-api';
 import {
   AlertTriangle,
   ArrowRight,
@@ -96,6 +95,6 @@ export const Icons = {
   userPlus: UserPlus,
   clockArrowDown: ClockArrowDown,
   reimbursement: HandCoins,
-  leave: PlaneTakeoff,
+  leave: UserX2Icon,
   download: FolderDown
 };

@@ -1,23 +1,27 @@
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
-import { fakeReimbursements } from '@/constants/mock-api';
+import { Reimbursement } from '@/features/reimbursements/types';
 import { cn } from '@/lib/utils';
 import getConfig from 'next/config';
 import Link from 'next/link';
 
-// use when endpoint is available
-async function getReimbursements() {
-  const { publicRuntimeConfig } = getConfig();
-  const baseUrl = publicRuntimeConfig.baseUrl;
-  const res = await fetch(`${baseUrl}/reimbursements/`);
+async function getReimbursements(): Promise<Reimbursement[]> {
+  try {
+    const { publicRuntimeConfig } = getConfig();
+    const baseUrl = publicRuntimeConfig.baseUrl;
 
-  return res.json();
+    const response = await fetch(`${baseUrl}/api/${'ORG001'}/reimbursement`);
+
+    const reimbursementList = await response.json();
+
+    return reimbursementList.reimbursements;
+  } catch (error) {
+    throw new Error('Failed to fetch reimbursements');
+  }
 }
 
 export async function ReimbursementsList() {
-  // const data = await getReimbursements();
-
-  const reimbursementsList = await fakeReimbursements.getReimbursementList();
+  const reimbursementsList = await getReimbursements();
 
   return (
     <Card>
@@ -40,7 +44,7 @@ export async function ReimbursementsList() {
               <div className='flex items-center' key={reimbursement.id}>
                 <div className='ml-4 space-y-1'>
                   <p className='text-sm font-medium leading-none'>
-                    {reimbursement.reimbursementType.name}
+                    {reimbursement.reimbursement_type.name}
                   </p>
                   <p className='text-sm text-muted-foreground'>
                     {reimbursement.status}
