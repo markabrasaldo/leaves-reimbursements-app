@@ -1,5 +1,4 @@
 import { startTransition, useActionState, useState } from 'react';
-import { Calendar } from '../ui/calendar';
 import { createMeeting, getAvailableSlots } from './calendar-action';
 import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';

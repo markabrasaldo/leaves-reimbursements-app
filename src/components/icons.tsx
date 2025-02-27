@@ -32,12 +32,12 @@ import {
   UserCircle2Icon,
   UserPen,
   UserPlus,
-  PlaneTakeoff,
   UserX2Icon,
   X,
   ClockArrowDown,
   HandCoins,
-  FolderDown
+  FolderDown,
+  Calendar
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -95,6 +95,7 @@ export const Icons = {
   userPlus: UserPlus,
   clockArrowDown: ClockArrowDown,
   reimbursement: HandCoins,
-  leave: UserX2Icon,
+  leaves: UserX2Icon,
+  calendar: Calendar,
   download: FolderDown
 };

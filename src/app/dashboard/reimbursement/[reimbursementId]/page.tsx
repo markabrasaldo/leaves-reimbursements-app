@@ -2,6 +2,8 @@ import FormCardSkeleton from '@/components/form-card-skeleton';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
 import ReimbursementViewPage from '@/features/reimbursements/components/reimbursement-view-page';
+import getConfig from 'next/config';
+import { getSessionDetails } from '@/app/utils/getSessionDetails';
 
 export const metadata = {
   title: 'Dashboard : Reimbursement View'
@@ -9,26 +11,36 @@ export const metadata = {
 
 type PageProps = { params: Promise<{ reimbursementId: string }> };
 
+const { publicRuntimeConfig } = getConfig();
+const baseUrl = publicRuntimeConfig.baseUrlReimbursement;
+
 async function getReimbursementTypes() {
+  const { accessToken, organization } = await getSessionDetails();
+
   const response = await fetch(
-    'http://localhost:3000/api/ORG001/reimbursement-type',
+    `${baseUrl}/${organization?.code}/reimbursement-type`,
     {
-      cache: 'no-store',
       headers: {
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
-      }
+      },
+      cache: 'force-cache'
     }
   );
 
+  const reimbursementTypeList = await response.json();
+
   if (!response.ok) {
-    throw new Error('Failed to fetch leave types');
+    throw new Error(
+      reimbursementTypeList.error || 'Failed to fetch reimbursement types'
+    );
   }
 
-  return response.json();
+  return reimbursementTypeList;
 }
 
 export default async function Page(props: PageProps) {
-  const reimbursementTypesData = await getReimbursementTypes();
+  const reimbursementTypes = await getReimbursementTypes();
   const params = await props.params;
 
   return (
@@ -36,7 +48,7 @@ export default async function Page(props: PageProps) {
       <div className='flex-1 space-y-4'>
         <Suspense fallback={<FormCardSkeleton />}>
           <ReimbursementViewPage
-            reimbursementTypesData={reimbursementTypesData}
+            reimbursementTypesData={reimbursementTypes?.data}
             reimbursementId={params.reimbursementId}
           />
         </Suspense>

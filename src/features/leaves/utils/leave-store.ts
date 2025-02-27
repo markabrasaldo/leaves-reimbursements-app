@@ -1,12 +1,5 @@
 import { create } from 'zustand';
-
-export interface LeaveType {
-  id: string;
-  name: string;
-  color: string;
-  description: string;
-  icon: string;
-}
+import { LeaveType } from '../types';
 
 interface LeaveStore {
   selectedLeave: string;

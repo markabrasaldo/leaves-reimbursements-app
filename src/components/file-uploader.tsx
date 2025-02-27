@@ -90,7 +90,6 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @example disabled
    */
   disabled?: boolean;
-  register?: any;
 }
 
 export function FileUploader(props: FileUploaderProps) {
@@ -104,7 +103,6 @@ export function FileUploader(props: FileUploaderProps) {
     maxFiles = 1,
     multiple = false,
     disabled = false,
-    register,
     className,
     ...dropzoneProps
   } = props;
@@ -217,7 +215,8 @@ export function FileUploader(props: FileUploaderProps) {
             )}
             {...dropzoneProps}
           >
-            <input {...register} {...getInputProps()} />
+            <input {...getInputProps()} />
+
             {isDragActive ? (
               <div className='flex flex-col items-center justify-center gap-4 sm:px-5'>
                 <div className='rounded-full border border-dashed p-3'>

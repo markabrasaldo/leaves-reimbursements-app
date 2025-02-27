@@ -2,13 +2,20 @@
 
 import getConfig from 'next/config';
 import { FormState, schema } from './schema';
-import { delay } from '@/constants/mock-api';
+import { getSessionDetails } from '@/app/utils/getSessionDetails';
+
+const { publicRuntimeConfig } = getConfig();
+const baseUrl = publicRuntimeConfig.baseUrlReimbursement;
 
 export async function submitForm(
   prevState: FormState,
   formData: FormData
 ): Promise<any> {
+  const { accessToken, organization } = await getSessionDetails();
+
   const reimbursementFormData = Object.fromEntries(formData);
+
+  const attachments = formData.getAll('attachments');
 
   const validatedReimbursementFormData = schema.safeParse(
     reimbursementFormData
@@ -27,35 +34,62 @@ export async function submitForm(
       };
     }
 
-    const { publicRuntimeConfig } = getConfig();
-    const baseUrl = publicRuntimeConfig.baseUrl;
+    const isStatusDraft = reimbursementFormData?.status === 'DRAFT';
 
     const payload = {
-      organization_id: 'b39eddb6-dbe3-4822-8f23-361d6d4e3bdb',
+      organization_id: organization?.id,
       reimbursement_type_code: reimbursementFormData.reimbursementType,
-      date: Date.now(),
-      amount: reimbursementFormData.amount,
-      status: 'DRAFT'
+      date: new Date(Date.now()).toISOString(),
+      amount: Number(reimbursementFormData.amount)
     };
 
-    const response = await fetch(`${baseUrl}/api/${'ORG001'}/reimbursement`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ ...payload })
-    });
+    const response = await fetch(
+      `${baseUrl}/${organization?.code}/reimbursement${isStatusDraft ? `/${reimbursementFormData?.leaveId}` : ''}`,
+      {
+        method: isStatusDraft ? 'PUT' : 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ...payload })
+      }
+    );
 
     const result = await response.json();
 
-    await delay(1500);
-
-    if (result) {
+    if (!response.ok) {
       return {
-        status: 'ok',
-        message: 'Sucess!',
-        result
+        status: 'error',
+        message: result.error,
+        formData: reimbursementFormData
       };
     }
+
+    const uploadImageResponse = await fetch(
+      `${baseUrl}/${organization?.code}/reimbursement/${result.data.id}/upload`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ attachments })
+      }
+    );
+
+    const uploadImageResult = await uploadImageResponse.json();
+
+    if (!uploadImageResponse.ok) {
+      return {
+        status: 'error',
+        message: uploadImageResult.error,
+        formData: reimbursementFormData
+      };
+    }
+
+    return {
+      status: 'success',
+      message: result.message
+    };
   }
 }

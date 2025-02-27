@@ -49,7 +49,7 @@ export function DataTableFilterBox({
 }: FilterBoxProps) {
   const selectedValuesSet = React.useMemo(() => {
     if (!filterValue) return new Set<string>();
-    const values = filterValue.split('.');
+    const values = filterValue.split(',');
     return new Set(values.filter((value) => value !== ''));
   }, [filterValue]);
 
@@ -60,7 +60,7 @@ export function DataTableFilterBox({
     } else {
       newSet.add(value);
     }
-    setFilterValue(Array.from(newSet).join('.') || null);
+    setFilterValue(Array.from(newSet).join(',') || null);
   };
 
   const resetFilter = () => setFilterValue(null);

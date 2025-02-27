@@ -31,3 +31,8 @@ export interface Reimbursement {
   attachments: Attachment[];
   description?: string;
 }
+
+export interface ReimbursementsResponse {
+  data: Reimbursement[];
+  message: string;
+}

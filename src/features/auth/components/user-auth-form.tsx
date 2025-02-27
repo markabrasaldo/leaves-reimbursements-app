@@ -10,39 +10,26 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSearchParams } from 'next/navigation';
 import { useActionState, useEffect, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 import { authentication } from '@/lib/auth-action';
-import GithubSignInButton from './github-auth-button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
 
 const formSchema = z.object({
   email: z.string().trim().email({ message: 'Enter a valid email address' }),
   password: z
     .string()
     .trim()
-    .min(6, { message: 'Minimum of 6 characters or digits' }),
-  role: z.string().nonempty({ message: 'Please select a role' })
+    .min(6, { message: 'Minimum of 6 characters or digits' })
 });
 
 type UserFormValue = z.infer<typeof formSchema>;
 
 export default function UserAuthForm() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
   const defaultValues = {
     email: '',
-    password: '',
-    role: ''
+    password: ''
   };
 
   const form = useForm<UserFormValue>({
@@ -64,22 +51,10 @@ export default function UserAuthForm() {
     }
   }, [loginState]);
 
-  const roleData = [
-    {
-      id: 'user',
-      name: 'User'
-    },
-    {
-      id: 'admin',
-      name: 'Admin'
-    }
-  ];
-
   const onSubmit = (data: UserFormValue) => {
     const formData = new FormData();
     formData.append('email', data.email);
     formData.append('password', data.password);
-    formData.append('role', data.role);
 
     startTransition(() => {
       loginFormAction(formData);
@@ -129,34 +104,6 @@ export default function UserAuthForm() {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name='role'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Role</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select a role' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {roleData.map((role) => (
-                      <SelectItem key={role.id} value={role.id}>
-                        {role.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           {loginState?.messageType === 'error' && (
             <div
               className='mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800 dark:bg-gray-800 dark:text-red-400'
@@ -170,17 +117,6 @@ export default function UserAuthForm() {
           </Button>
         </form>
       </Form>
-      <div className='relative'>
-        <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
-        </div>
-        <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-background px-2 text-muted-foreground'>
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <GithubSignInButton />
     </>
   );
 }

@@ -33,6 +33,8 @@ import { submitForm } from '../actions/form';
 import { schema } from '../actions/schema';
 import { toast } from 'sonner';
 import { redirect } from 'next/navigation';
+import { format } from 'date-fns';
+import { toastUtil } from '@/app/utils/toastUtil';
 
 export default function ReimbursementForm({
   reimbursementTypesData,
@@ -57,10 +59,14 @@ export default function ReimbursementForm({
 
   const defaultValues = {
     name: initialData?.organization?.name || '',
-    reimbursementType: initialData?.reimbursement_type?.code || '',
+    reimbursementType:
+      initialData?.reimbursement_type?.code ||
+      // initialData['reimbursement_type_code'] ||
+      '',
     amount: initialData?.amount || 0,
     description: initialData?.description || '',
     status: initialData?.status || '',
+    dateRequested: initialData ? format(initialData?.date!, 'yyyy-MM-dd') : '',
     attachments: newFiles
   };
 
@@ -75,12 +81,18 @@ export default function ReimbursementForm({
   );
 
   useEffect(() => {
-    if (state?.status === 'ok') {
-      toast.success(state?.message);
-
-      redirect(`/dashboard/reimbursement`);
+    if (state?.status) {
+      toastUtil(state);
+      // if (state?.status === 'success') redirect('/dashboard/leave');
     }
-  }, [state]);
+    // if (leaveRequestState?.status) {
+    // toastUtil(leaveRequestState);
+    // if (leaveRequestState?.status === 'success') redirect('/dashboard/leave');
+    // }
+  }, [
+    state
+    // leaveRequestState
+  ]);
 
   const { reimbursementTypes, initializeReimbursementTypes } =
     useReimbursementStore();
@@ -94,12 +106,19 @@ export default function ReimbursementForm({
       initialData?.status as string
     ) || initialData?.status === 'SUBMITTED';
 
-  const formRef = useRef<HTMLFormElement>(null);
-
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     form.trigger();
+
     const formData = new FormData(event.currentTarget);
+    const attachments = form.getValues('attachments');
+
+    if (attachments && attachments.length) {
+      for (let i = 0; i < attachments.length; i++) {
+        formData.append('attachments', attachments[i], attachments[i].name);
+      }
+    }
+
     startTransition(() => {
       formAction(formData);
     });
@@ -114,7 +133,7 @@ export default function ReimbursementForm({
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form ref={formRef} onSubmit={handleFormSubmit} className='space-y-8'>
+          <form onSubmit={handleFormSubmit} className='space-y-8'>
             <FormField
               control={form.control}
               name='attachments'
@@ -129,7 +148,7 @@ export default function ReimbursementForm({
                           onValueChange={field.onChange}
                           maxFiles={4}
                           maxSize={4 * 1024 * 1024}
-                          register={form.register('attachments')}
+                          // register={form.register('attachments')}
                           // disabled={loading}
                           // progresses={progresses}
                           // pass the onUpload function here for direct upload
@@ -197,19 +216,35 @@ export default function ReimbursementForm({
                 )}
               />
               {initialData?.status && (
-                <FormField
-                  control={form.control}
-                  name='status'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <FormControl>
-                        <Input disabled={true} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <>
+                  <FormField
+                    control={form.control}
+                    name='dateRequested'
+                    disabled={true}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Date Requested</FormLabel>
+                        <FormControl>
+                          <Input type='date' {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='status'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <FormControl>
+                          <Input disabled={true} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
               )}
             </div>
             <div className='space-x-2'>

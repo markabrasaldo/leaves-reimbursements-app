@@ -4,34 +4,8 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-
-type LeaveData = {
-  days_applied: number;
-  end_date: string;
-  id: number;
-  leave_type: {
-    leave_type_id: string;
-    code: string;
-    name: string;
-  };
-  name: {
-    id: string;
-    organization_id: string;
-    code: string;
-    name: string;
-    description: string;
-  };
-  organization: {
-    organization_id: string;
-    name: string;
-  };
-  start_date: string;
-  status: string;
-};
-
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString();
-};
+import { Leaves } from '../types';
+import { formatDate } from '@/app/utils/formatDate';
 
 const getLeaveTypeColor = (leaveType: string): string => {
   const colorMap: Record<string, string> = {
@@ -55,28 +29,28 @@ const getStatusColor = (status: string): string => {
   return colorMap[status] || colorMap.default;
 };
 
-export const columns: ColumnDef<LeaveData>[] = [
+export const columns: ColumnDef<Leaves>[] = [
   {
-    accessorKey: 'name.name',
+    accessorKey: 'user_email',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Name
+          User
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const name = row.original.name.name;
+      const user = row.original.user_email;
       return (
         <Link
           href={`/dashboard/leave/${row.original.id}`}
           className='underline'
         >
-          {name}
+          {user}
         </Link>
       );
     }
@@ -85,7 +59,7 @@ export const columns: ColumnDef<LeaveData>[] = [
     accessorKey: 'leave_type.name',
     header: 'Leave Type',
     cell: ({ row }) => {
-      const leaveType = row.original.leave_type.name;
+      const leaveType = row.original.leave_type_name;
       return <span className={getLeaveTypeColor(leaveType)}>{leaveType}</span>;
     }
   },
@@ -94,7 +68,7 @@ export const columns: ColumnDef<LeaveData>[] = [
     header: 'Days Applied'
   },
   {
-    accessorKey: 'organization.name',
+    accessorKey: 'organization_name',
     header: 'Department'
   },
   {

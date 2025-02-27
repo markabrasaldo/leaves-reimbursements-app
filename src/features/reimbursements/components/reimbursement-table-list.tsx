@@ -3,38 +3,49 @@ import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as ReimbursementTable } from '@/components/ui/table/data-table';
 import { columns } from './table/columns';
 import { TableFilter } from 'types';
-import { Reimbursement } from '../types';
+import { Reimbursement, ReimbursementsResponse } from '../types';
 import getConfig from 'next/config';
+import { getSessionDetails } from '@/app/utils/getSessionDetails';
 
-async function getReimbursements(filters: TableFilter) {
-  await delay(1500);
+const { publicRuntimeConfig } = getConfig();
+const baseUrl = publicRuntimeConfig.baseUrlReimbursement;
 
-  try {
-    const { publicRuntimeConfig } = getConfig();
-    const baseUrl = publicRuntimeConfig.baseUrl;
-    const url = new URL(`${baseUrl}/api/${'ORG001'}/reimbursement`);
-    const params = new URLSearchParams(url.search);
+async function getReimbursements(
+  filters: TableFilter
+): Promise<ReimbursementsResponse> {
+  const { accessToken, organization } = await getSessionDetails();
 
-    if (filters) {
-      Object.keys(filters).forEach((key: keyof TableFilter) => {
-        return params.append(key.toString(), filters[key].toString());
-      });
-    }
+  const url = new URL(`${baseUrl}/${organization?.code}/reimbursement`);
+  const params = new URLSearchParams(url.search);
 
-    const response = await fetch(
-      // `${baseUrl}/${organization_code}/reimbursement` // when endpoint is available
-      params.toString() ? `${url}?${params.toString()}` : url
-    );
-
-    const reimbursementList = await response.json();
-
-    return {
-      total_reimbursements: reimbursementList.total_reimbursements,
-      reimbursements: reimbursementList.reimbursements
-    };
-  } catch (error) {
-    throw new Error('Failed to fetch reimbursements');
+  if (filters) {
+    Object.keys(filters).forEach((key: keyof TableFilter) => {
+      return params.append(key.toString(), filters[key].toString());
+    });
   }
+
+  const response = await fetch(
+    params.toString() ? `${url}?${params.toString()}` : url,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+
+  const reimbursementList = await response.json();
+
+  if (!response.ok) {
+    throw new Error(reimbursementList.error || 'Failed to fetch reimbursement');
+  }
+
+  const { data, message } = reimbursementList;
+
+  return {
+    data,
+    message
+  };
 }
 
 export default async function ReimbursementListPage() {
@@ -45,16 +56,16 @@ export default async function ReimbursementListPage() {
   const status = searchParamsCache.get('status');
 
   const filters = {
-    page,
-    limit: pageLimit,
+    ...(page && { page }),
+    ...(pageLimit && { limit: pageLimit }),
     ...(search && { search }),
     ...(status && { status: status })
   };
 
-  const data = await getReimbursements(filters);
+  const { data } = await getReimbursements(filters);
 
-  const totalReimbursements = data.total_reimbursements;
-  const reimbursements: Reimbursement[] = data.reimbursements;
+  const totalReimbursements = (data && data.length) ?? 0;
+  const reimbursements: Reimbursement[] = data ?? [];
 
   return (
     <ReimbursementTable

@@ -24,7 +24,7 @@ export const navItems: NavItem[] = [
   {
     title: 'Leave',
     url: '/dashboard/leave',
-    icon: 'leave',
+    icon: 'leaves',
     isActive: false,
     shortcut: ['l', 'l'],
     items: [] // Empty array as there are no child items for Dashboard
@@ -33,6 +33,14 @@ export const navItems: NavItem[] = [
     title: 'Reimbursements',
     url: '/dashboard/reimbursement',
     icon: 'reimbursement',
+    shortcut: ['r', 'r'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
+    title: 'Calendar',
+    url: '/dashboard/calendar',
+    icon: 'calendar',
     shortcut: ['r', 'r'],
     isActive: false,
     items: [] // No child items
@@ -130,61 +138,52 @@ export const dashboardCardItems: CardItem[] = [
     cardTitle: 'Total Employee',
     cardValue: 60,
     cardIcon: 'logo',
-    cardSubText: `${'5%'} Last Month`,
+    // cardSubText: `${'5%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'New Employee',
     cardValue: 2,
     cardIcon: 'userPlus',
-    cardSubText: `${'1%'} Last Month`,
+    // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'On Leave',
     cardValue: 5,
-    cardIcon: 'leave',
-    cardSubText: `${'1%'} Last Month`,
+    cardIcon: 'leaves',
+    // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'Total Reimbursements',
-    cardValue: 1000,
+    cardValue: 5,
     cardIcon: 'clockAlert',
-    cardSubText: `${'6%'} Last Month`,
+    // cardSubText: `${'6%'} Last Month`,
     trending: 'up'
   }
 ];
 
 export const userCardItems: CardItem[] = [
   {
-    cardTitle: 'Available Leaves',
-    cardValue: 60,
-    cardIcon: 'logo',
-    cardSubText: `${'5%'} Last Month`,
-    cardButton: true,
-    cardButtonText: 'Apply',
-    trending: 'up'
-  },
-  {
     cardTitle: 'Pending Requests',
     cardValue: 2,
     cardIcon: 'userPlus',
-    cardSubText: `${'1%'} Last Month`,
+    // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'Approved Requests',
     cardValue: 5,
-    cardIcon: 'leave',
-    cardSubText: `${'1%'} Last Month`,
+    cardIcon: 'leaves',
+    // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'Reimbursements',
     cardValue: 250,
     cardIcon: 'clockAlert',
-    cardSubText: `${'6%'} Last Month`,
+    // cardSubText: `${'6%'} Last Month`,
     trending: 'up'
   }
 ];

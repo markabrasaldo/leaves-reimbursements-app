@@ -2,6 +2,7 @@
 
 import { signIn, signOut } from '@/lib/auth';
 import { AuthError } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 export async function authentication(
@@ -11,16 +12,10 @@ export async function authentication(
   try {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
-    const role = formData.get('role') as string;
-
-    if (!['user', 'admin'].includes(role)) {
-      return { messageType: 'error', message: 'Invalid role selected.' };
-    }
 
     const result = await signIn('credentials', {
       email,
       password,
-      role,
       redirect: false
     });
 
@@ -43,5 +38,6 @@ export async function authentication(
 }
 
 export async function signOutAction() {
+  revalidatePath('/');
   await signOut({ redirectTo: '/' });
 }

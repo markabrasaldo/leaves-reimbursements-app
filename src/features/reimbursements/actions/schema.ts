@@ -11,7 +11,7 @@ export const ACCEPTED_IMAGE_TYPES = [
 export const schema = z.object({
   attachments: z
     .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
+    .refine((files) => files?.length > 0, 'Image is required.')
     .refine(
       (files) => files?.[0]?.size <= MAX_FILE_SIZE,
       `Max file size is 5MB.`
@@ -27,7 +27,8 @@ export const schema = z.object({
   amount: z.coerce
     .number({ required_error: 'Amount is required' })
     .gte(1, { message: 'Amount is Required' }), // alias .min(5)
-  status: z.string()
+  status: z.string().optional(),
+  dateRequested: z.string().optional()
 });
 
 export type FormState = z.infer<typeof schema>;

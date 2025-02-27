@@ -3,30 +3,40 @@ import ReimbursementForm from './reimbursement-form';
 import { Reimbursement } from '../types';
 import { ReimbursementType } from '../utils/reimbursement-store';
 import getConfig from 'next/config';
+import { getSessionDetails } from '@/app/utils/getSessionDetails';
 
 type TReimbursementViewPageProps = {
   reimbursementTypesData: ReimbursementType[];
   reimbursementId: string;
 };
+const { publicRuntimeConfig } = getConfig();
+const baseUrl = publicRuntimeConfig.baseUrlReimbursement;
 
 async function getReimbursementById(reimbursementId: string) {
-  try {
-    const { publicRuntimeConfig } = getConfig();
-    const baseUrl = publicRuntimeConfig.baseUrl;
+  const { accessToken, organization } = await getSessionDetails();
 
-    const response = await fetch(
-      // `${baseUrl}/${organization_code}/reimbursement/${reimbursementId}` // when endpoint is available
-      `${baseUrl}/api/ORG001/reimbursement/${reimbursementId}`
-    );
+  const response = await fetch(
+    `${baseUrl}/${organization?.code}/reimbursement/${reimbursementId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
 
-    const reimbursement = await response.json();
+  const reimbursement = await response.json();
 
-    return {
-      reimbursement
-    };
-  } catch (error) {
-    throw new Error('Failed to fetch reimbursement by Id');
+  if (!response.ok) {
+    throw new Error(reimbursement.error || 'Failed to fetch reimbursementId');
   }
+
+  const { data, message } = reimbursement;
+
+  return {
+    data,
+    message
+  };
 }
 
 export default async function TReimbursementViewPageProps({
@@ -37,17 +47,15 @@ export default async function TReimbursementViewPageProps({
   let pageTitle = 'Create New Reimbursement';
 
   if (reimbursementId !== 'new') {
-    //change fetching of data
-    const data = await getReimbursementById(reimbursementId);
+    const { data, message } = await getReimbursementById(reimbursementId);
 
-    reimbursement = data.reimbursement as Reimbursement;
+    reimbursement = data as Reimbursement;
     if (!reimbursement) {
       notFound();
     }
     pageTitle = `Edit Reimbursement`;
   }
 
-  //change form
   return (
     <ReimbursementForm
       reimbursementTypesData={reimbursementTypesData}
