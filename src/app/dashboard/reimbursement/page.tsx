@@ -53,7 +53,7 @@ export default async function Page(props: pageProps) {
   );
 }
 
-export const FILTER_OPTIONS = [
+const FILTER_OPTIONS = [
   { value: 'DRAFT', label: 'Draft' },
   { value: 'SUBMITTED', label: 'Submitted' },
   { value: 'APPROVED', label: 'Approved' },

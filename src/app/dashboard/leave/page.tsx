@@ -53,7 +53,7 @@ export default async function Page(props: pageProps) {
   );
 }
 
-export const FILTER_OPTIONS = [
+const FILTER_OPTIONS = [
   { value: 'SICKLEAVE', label: 'Sick Leave' },
   { value: 'BERIEVEMENTLEAVE', label: 'Berievement Leave' },
   { value: 'VACATIONLEAVE', label: 'Vacation Leave' }
