@@ -24,7 +24,7 @@ export const navItems: NavItem[] = [
   {
     title: 'Leave',
     url: '/dashboard/leave',
-    icon: 'leave',
+    icon: 'leaves',
     isActive: false,
     shortcut: ['l', 'l'],
     items: [] // Empty array as there are no child items for Dashboard
@@ -38,42 +38,46 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   },
   {
-    title: 'Product',
-    url: '/dashboard/product',
-    icon: 'product',
-    shortcut: ['p', 'p'],
-    isActive: false,
-    items: [] // No child items
-  },
-  {
-    title: 'Account',
-    url: '#', // Placeholder as there is no direct link for the parent
-    icon: 'billing',
-    isActive: true,
-
-    items: [
-      {
-        title: 'Profile',
-        url: '/dashboard/profile',
-        icon: 'userPen',
-        shortcut: ['m', 'm']
-      },
-      {
-        title: 'Login',
-        shortcut: ['l', 'l'],
-        url: '/',
-        icon: 'login'
-      }
-    ]
-  },
-  {
-    title: 'Kanban',
-    url: '/dashboard/kanban',
-    icon: 'kanban',
-    shortcut: ['k', 'k'],
+    title: 'Calendar',
+    url: '/dashboard/calendar',
+    icon: 'calendar',
+    shortcut: ['r', 'r'],
     isActive: false,
     items: [] // No child items
   }
+
+  //hid pages for reference
+  // {
+  //   title: 'Product',
+  //   url: '/dashboard/product',
+  //   icon: 'product',
+  //   shortcut: ['p', 'p'],
+  //   isActive: false,
+  //   items: [] // No child items
+  // },
+  // {
+  //   title: 'Account',
+  //   url: '#', // Placeholder as there is no direct link for the parent
+  //   icon: 'billing',
+  //   isActive: true,
+
+  //   items: [
+  //     {
+  //       title: 'Profile',
+  //       url: '/dashboard/profile',
+  //       icon: 'userPen',
+  //       shortcut: ['m', 'm']
+  //     }
+  //   ]
+  // }
+  // {
+  //   title: 'Kanban',
+  //   url: '/dashboard/kanban',
+  //   icon: 'kanban',
+  //   shortcut: ['k', 'k'],
+  //   isActive: false,
+  //   items: [] // No child items
+  // }
 ];
 
 export interface SaleUser {
@@ -134,75 +138,52 @@ export const dashboardCardItems: CardItem[] = [
     cardTitle: 'Total Employee',
     cardValue: 60,
     cardIcon: 'logo',
-    cardSubText: `${'5%'} Last Month`,
+    // cardSubText: `${'5%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'New Employee',
     cardValue: 2,
     cardIcon: 'userPlus',
-    cardSubText: `${'1%'} Last Month`,
+    // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'On Leave',
     cardValue: 5,
-    cardIcon: 'leave',
-    cardSubText: `${'1%'} Last Month`,
+    cardIcon: 'leaves',
+    // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'Total Reimbursements',
-    cardValue: 1000,
+    cardValue: 5,
     cardIcon: 'clockAlert',
-    cardSubText: `${'6%'} Last Month`,
+    // cardSubText: `${'6%'} Last Month`,
     trending: 'up'
   }
-  // {
-  //   cardTitle: 'Early Out',
-  //   cardValue: 6,
-  //   cardIcon: 'clockArrowDown',
-  //   cardSubText: `${'8%'} Last Month`,
-  //   trending: 'up'
-  // }
 ];
 
 export const userCardItems: CardItem[] = [
   {
-    cardTitle: 'Available Leaves',
-    cardValue: 60,
-    cardIcon: 'logo',
-    cardSubText: `${'5%'} Last Month`,
-    cardButton: true,
-    cardButtonText: 'Apply',
-    trending: 'up'
-  },
-  {
     cardTitle: 'Pending Requests',
     cardValue: 2,
     cardIcon: 'userPlus',
-    cardSubText: `${'1%'} Last Month`,
+    // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'Approved Requests',
     cardValue: 5,
-    cardIcon: 'leave',
-    cardSubText: `${'1%'} Last Month`,
+    cardIcon: 'leaves',
+    // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
   {
     cardTitle: 'Reimbursements',
     cardValue: 250,
     cardIcon: 'clockAlert',
-    cardSubText: `${'6%'} Last Month`,
+    // cardSubText: `${'6%'} Last Month`,
     trending: 'up'
   }
-  // {
-  //   cardTitle: 'Early Out',
-  //   cardValue: 6,
-  //   cardIcon: 'clockArrowDown',
-  //   cardSubText: `${'8%'} Last Month`,
-  //   trending: 'up'
-  // }
 ];

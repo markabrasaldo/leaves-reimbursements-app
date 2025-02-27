@@ -3,59 +3,49 @@ import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as ReimbursementTable } from '@/components/ui/table/data-table';
 import { columns } from './table/columns';
 import { TableFilter } from 'types';
-import { Reimbursement } from '../types';
-import { matchSorter } from 'match-sorter';
+import { Reimbursement, ReimbursementsResponse } from '../types';
 import getConfig from 'next/config';
+import { getSessionDetails } from '@/app/utils/getSessionDetails';
 
-async function getReimbursements(filters: TableFilter) {
-  await delay(1500);
+const { publicRuntimeConfig } = getConfig();
+const baseUrl = publicRuntimeConfig.baseUrlReimbursement;
 
-  try {
-    const response = await fetch(
-      // `${baseUrl}/${organization_code}/reimbursement` // when endpoint is available
-      `http://localhost:3000/api/ORG001/reimbursement`
-    );
+async function getReimbursements(
+  filters: TableFilter
+): Promise<ReimbursementsResponse> {
+  const { accessToken, organization } = await getSessionDetails();
 
-    const reimbursementList = await response.json();
+  const url = new URL(`${baseUrl}/${organization?.code}/reimbursement`);
+  const params = new URLSearchParams(url.search);
 
-    const totalReimbursements = reimbursementList.length ?? 0;
-
-    return {
-      total_reimbursements: totalReimbursements,
-      reimbursements: reimbursementList
-    };
-  } catch (error) {
-    throw new Error('Failed to fetch reimbursements');
+  if (filters) {
+    Object.keys(filters).forEach((key: keyof TableFilter) => {
+      return params.append(key.toString(), filters[key].toString());
+    });
   }
 
-  // let newResponse = response;
+  const response = await fetch(
+    params.toString() ? `${url}?${params.toString()}` : url,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
 
-  // if (filters?.search) {
-  //   newResponse = matchSorter(response, filters.search, {
-  //     keys: ['organization', 'reimbursementType', 'status']
-  //   });
-  // }
-  // if (filters?.categories) {
-  //   const categoriesArray = filters.categories
-  //     ? filters.categories.split('.')
-  //     : [];
+  const reimbursementList = await response.json();
 
-  //   if (filters.categories.length > 0) {
-  //     newResponse = response.filter((reimbursement) =>
-  //       categoriesArray.includes(reimbursement.status)
-  //     );
-  //   }
-  // }
-  // const totalReimbursements = newResponse.length ?? 0;
+  if (!response.ok) {
+    throw new Error(reimbursementList.error || 'Failed to fetch reimbursement');
+  }
 
-  //pagination
-  // const offset = (filters.page - 1) * filters.limit;
-  // const paginatedResponse = newResponse.slice(offset, offset + filters.limit);
+  const { data, message } = reimbursementList;
 
-  // return {
-  //   total_reimbursements: totalReimbursements,
-  //   reimbursements: paginatedResponse
-  // };
+  return {
+    data,
+    message
+  };
 }
 
 export default async function ReimbursementListPage() {
@@ -63,19 +53,19 @@ export default async function ReimbursementListPage() {
   const page = searchParamsCache.get('page');
   const search = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
-  const categories = searchParamsCache.get('categories');
+  const status = searchParamsCache.get('status');
 
   const filters = {
-    page,
-    limit: pageLimit,
+    ...(page && { page }),
+    ...(pageLimit && { limit: pageLimit }),
     ...(search && { search }),
-    ...(categories && { categories: categories })
+    ...(status && { status: status })
   };
 
-  const data = await getReimbursements(filters);
+  const { data } = await getReimbursements(filters);
 
-  const totalReimbursements = data.total_reimbursements;
-  const reimbursements: Reimbursement[] = data.reimbursements;
+  const totalReimbursements = (data && data.length) ?? 0;
+  const reimbursements: Reimbursement[] = data ?? [];
 
   return (
     <ReimbursementTable

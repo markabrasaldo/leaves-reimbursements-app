@@ -1,32 +1,53 @@
+import { getSessionDetails } from '@/app/utils/getSessionDetails';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
-import { leaves } from '@/constants/mock-api';
+import { Leave, LeavesResponse } from '@/features/leaves/types';
 import { cn } from '@/lib/utils';
 import getConfig from 'next/config';
 import Link from 'next/link';
+import { Roles } from 'types';
 
-// use when endpoint is available
-async function getReimbursements(organization_code: string) {
-  const { publicRuntimeConfig } = getConfig();
-  const baseUrl = publicRuntimeConfig.baseUrl;
-  const res = await fetch(`${baseUrl}/${organization_code}/reimbursements/`);
+const { publicRuntimeConfig } = getConfig();
+const baseUrl = publicRuntimeConfig.baseUrlLeave;
 
-  return res.json();
+async function getLeaves(): Promise<LeavesResponse> {
+  const { accessToken, organization, role, user_id } =
+    await getSessionDetails();
+
+  const url = new URL(
+    role === ('Member' as unknown as Roles)
+      ? `${baseUrl}/${organization?.code}/users/${user_id}/leaves`
+      : `${baseUrl}/${organization?.code}/leaves`
+  );
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const leaveList = await response.json();
+
+  if (!response.ok) {
+    throw new Error(leaveList.error || 'Failed to fetch leave');
+  }
+
+  const { data, message } = leaveList;
+
+  return {
+    data,
+    message
+  };
 }
 
 export async function LeavesList() {
-  // const data = await getReimbursements('organization_code');
-
-  const leaveList = await leaves;
-
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString();
-  };
+  const { data: leaveList } = await getLeaves();
 
   return (
     <Card>
       <CardHeader className='flex flex-row place-content-between items-center'>
-        <CardTitle>Recent Leave Requests</CardTitle>
+        <CardTitle>Leave Requests</CardTitle>
         <Link
           href='/dashboard/leave'
           className={cn(
@@ -39,15 +60,15 @@ export async function LeavesList() {
       </CardHeader>
       <CardContent>
         <div className='space-y-8'>
-          {leaveList.slice(0, 5).map((leave) => {
+          {leaveList.slice(0, 5).map((leave: Leave) => {
             return (
               <div className='flex items-center' key={leave.id}>
                 <div className='ml-4 space-y-1'>
-                  <p className='text-sm font-medium leading-none'>
-                    {leave.name.name}
+                  <p className='text-base font-medium leading-none'>
+                    {leave.leave_type.name}
                   </p>
-                  <p className='text-sm text-muted-foreground'>
-                    {`${formatDate(leave.start_date)} - ${formatDate(leave.end_date)}`}
+                  <p className='text-xs text-muted-foreground'>
+                    {`${leave.start_date} - ${leave.end_date}`}
                   </p>
                 </div>
                 <div className='ml-auto font-medium'>{leave.status}</div>

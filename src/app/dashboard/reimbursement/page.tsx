@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 import ReimbursementListPage from '@/features/reimbursements/components/reimbursement-table-list';
-import ReimbursementTableAction from '@/features/reimbursements/components/table/reimbursement-table-action';
+import TableAction from '@/components/table/table-action';
 
 export const metadata = {
   title: 'Dashboard: Reimbursement'
@@ -41,7 +41,7 @@ export default async function Page(props: pageProps) {
           </Link>
         </div>
         <Separator />
-        <ReimbursementTableAction />
+        <TableAction filterOption={FILTER_OPTIONS} />
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
@@ -52,3 +52,11 @@ export default async function Page(props: pageProps) {
     </PageContainer>
   );
 }
+
+export const FILTER_OPTIONS = [
+  { value: 'DRAFT', label: 'Draft' },
+  { value: 'SUBMITTED', label: 'Submitted' },
+  { value: 'APPROVED', label: 'Approved' },
+  { value: 'REJECTED', label: 'Rejected' },
+  { value: 'REIMBURSED', label: 'Reimbursed' }
+];

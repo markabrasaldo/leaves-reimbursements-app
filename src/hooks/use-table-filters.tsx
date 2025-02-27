@@ -13,8 +13,8 @@ export function useTableFilters() {
   );
 
   const [categoriesFilter, setCategoriesFilter] = useQueryState(
-    'categories',
-    searchParams.categories.withOptions({ shallow: false }).withDefault('')
+    'status',
+    searchParams.status.withOptions({ shallow: false }).withDefault('')
   );
 
   const [page, setPage] = useQueryState(

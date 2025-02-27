@@ -3,9 +3,18 @@
 import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box';
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
-import { useTableFilters } from './use-table-filters';
+import { useTableFilters } from '@/hooks/use-table-filters';
 
-export default function ReimbursementTableAction() {
+interface FilterOption {
+  value: string;
+  label: string;
+}
+
+export default function TableAction({
+  filterOption
+}: {
+  filterOption: FilterOption[];
+}) {
   const {
     categoriesFilter,
     setCategoriesFilter,
@@ -26,7 +35,7 @@ export default function ReimbursementTableAction() {
       <DataTableFilterBox
         filterKey='status'
         title='Categories'
-        options={FILTER_OPTIONS}
+        options={filterOption}
         setFilterValue={setCategoriesFilter}
         filterValue={categoriesFilter}
       />
@@ -37,11 +46,3 @@ export default function ReimbursementTableAction() {
     </div>
   );
 }
-
-export const FILTER_OPTIONS = [
-  { value: 'DRAFT', label: 'Draft' },
-  { value: 'SUBMITTED', label: 'Submitted' },
-  { value: 'APPROVED', label: 'Approved' },
-  { value: 'REJECTED', label: 'Rejected' },
-  { value: 'REIMBURSED', label: 'Reimbursed' }
-];

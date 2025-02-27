@@ -15,6 +15,7 @@ import { Plus } from 'lucide-react';
 
 import { LeaveForm } from './leave-form';
 import { LeaveType } from '../utils/leave-store';
+import { searchParamsCache } from '@/lib/searchparams';
 
 interface LeaveCardProps {
   initialLeaveTypes: LeaveType[];
@@ -90,17 +91,14 @@ export function LeaveCard({ initialLeaveTypes }: LeaveCardProps) {
           </Card>
         </div>
       </div>
-
-      <div className='container mx-auto px-4 py-8'>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className='mx-auto w-[calc(100vw-2rem)] max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-4xl'>
-            <DialogHeader>
-              <DialogTitle>Request Leave</DialogTitle>
-            </DialogHeader>
-            <LeaveForm initialLeaveTypes={initialLeaveTypes} />
-          </DialogContent>
-        </Dialog>
-      </div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className='mx-auto w-[calc(100vw-2rem)] max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-4xl'>
+          <DialogHeader>
+            <DialogTitle>Request Leave</DialogTitle>
+          </DialogHeader>
+          <LeaveForm initialLeaveTypes={initialLeaveTypes} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

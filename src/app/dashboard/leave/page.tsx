@@ -1,57 +1,60 @@
 import PageContainer from '@/components/layout/page-container';
-import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import { searchParamsCache, serialize } from '@/lib/searchparams';
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
-import { LeaveCard } from '@/features/leave/components/leave-card';
-import { DataTable } from '@/features/leave/components/leave-table';
-import { columns } from '@/features/leave/components/table-columns';
+import { searchParamsCache, serialize } from '@/lib/searchparams';
+import LeavesListPage from '@/features/leaves/components/leave-table-list';
+import { SearchParams } from 'nuqs/server';
+import Link from 'next/link';
+import { buttonVariants } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
+import TableAction from '@/components/table/table-action';
+import { Heading } from '@/components/ui/heading';
 
-async function getLeaveList(organizationCode: string) {
-  const res = await fetch(
-    `http://localhost:3000/api/${organizationCode}/leave`,
-    {
-      cache: 'no-store'
-    }
-  );
+export const metadata = {
+  title: 'Dashboard: Leave'
+};
 
-  return res.json();
-}
+type pageProps = {
+  searchParams: Promise<SearchParams>;
+};
 
-async function getLeaveTypes() {
-  const response = await fetch('http://localhost:3000/api/leave-type', {
-    cache: 'no-store',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
+export default async function Page(props: pageProps) {
+  const searchParams = await props.searchParams;
+  // Allow nested RSCs to access the search params (in a type-safe way)
+  searchParamsCache.parse(searchParams);
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch leave types');
-  }
-
-  return response.json();
-}
-
-export default async function Page() {
-  const leaveList = await getLeaveList('1');
-  const leaveTypes = await getLeaveTypes();
+  // This key is used for invoke suspense if any of the search params changed (used for filters).
+  const key = serialize({ ...searchParams });
 
   return (
-    <PageContainer>
-      <div className='container'>
+    <PageContainer scrollable={false}>
+      <div className='flex flex-1 flex-col space-y-4'>
+        <div className='flex items-start justify-between'>
+          <Heading title='Leaves' description='Manage leaves' />
+          <Link
+            href='/dashboard/leave/new'
+            className={cn(buttonVariants(), 'text-xs md:text-sm')}
+          >
+            <Plus className='mr-2 h-4 w-4' /> Add New
+          </Link>
+        </div>
+        <Separator />
+        <TableAction filterOption={FILTER_OPTIONS} />
         <Suspense
+          key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
         >
-          <LeaveCard initialLeaveTypes={leaveTypes} />
-        </Suspense>
-
-        <Suspense
-          fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
-        >
-          <DataTable columns={columns} data={leaveList} />
+          <LeavesListPage />
         </Suspense>
       </div>
     </PageContainer>
   );
 }
+
+export const FILTER_OPTIONS = [
+  { value: 'SICKLEAVE', label: 'Sick Leave' },
+  { value: 'BERIEVEMENTLEAVE', label: 'Berievement Leave' },
+  { value: 'VACATIONLEAVE', label: 'Vacation Leave' }
+];

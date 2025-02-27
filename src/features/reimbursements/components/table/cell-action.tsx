@@ -24,6 +24,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {};
   const isPending = data.status === 'SUBMITTED';
+  const isEditable = data.status === 'DRAFT';
 
   return (
     <>
@@ -42,14 +43,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-          <DropdownMenuItem
-            onClick={
-              () => router.push(`/dashboard/reimbursement/${data.id}`) // change with proper endpoint
-            }
-          >
-            <Edit className='mr-2 h-4 w-4' /> Update
-          </DropdownMenuItem>
+          {isEditable && (
+            <DropdownMenuItem
+              onClick={
+                () => router.push(`/dashboard/reimbursement/${data.id}`) // change with proper endpoint
+              }
+            >
+              <Edit className='mr-2 h-4 w-4' /> Update
+            </DropdownMenuItem>
+          )}
           {isPending && (
             <DropdownMenuItem onClick={() => setOpen(true)}>
               <CircleCheckBig className='mr-2 h-4 w-4' />

@@ -1,4 +1,3 @@
-import { reimbursement } from '@/constants/mock-api';
 import {
   AlertTriangle,
   ArrowRight,
@@ -33,12 +32,12 @@ import {
   UserCircle2Icon,
   UserPen,
   UserPlus,
-  PlaneTakeoff,
   UserX2Icon,
   X,
   ClockArrowDown,
   HandCoins,
-  FolderDown
+  FolderDown,
+  Calendar
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -96,6 +95,7 @@ export const Icons = {
   userPlus: UserPlus,
   clockArrowDown: ClockArrowDown,
   reimbursement: HandCoins,
-  leave: PlaneTakeoff,
+  leaves: UserX2Icon,
+  calendar: Calendar,
   download: FolderDown
 };

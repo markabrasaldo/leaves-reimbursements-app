@@ -5,7 +5,7 @@ export interface ReimbursementType {
 }
 
 export interface Organization {
-  organization_id: string;
+  id: string;
   name: string;
 }
 
@@ -19,10 +19,8 @@ export interface Attachment {
 
 export interface Reimbursement {
   id: string;
-  reimbursementType: ReimbursementType;
-  reimbursement_type_code: string;
+  reimbursement_type: ReimbursementType;
   organization: Organization;
-  organization_id: string;
   date: Date | string;
   amount: number;
   status: string;
@@ -32,4 +30,9 @@ export interface Reimbursement {
   updated_by: Date | string;
   attachments: Attachment[];
   description?: string;
+}
+
+export interface ReimbursementsResponse {
+  data: Reimbursement[];
+  message: string;
 }
