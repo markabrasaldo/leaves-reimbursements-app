@@ -28,6 +28,12 @@ export default async function Page(props: pageProps) {
   // This key is used for invoke suspense if any of the search params changed (used for filters).
   const key = serialize({ ...searchParams });
 
+  const FILTER_OPTIONS = [
+    { value: 'SICKLEAVE', label: 'Sick Leave' },
+    { value: 'BERIEVEMENTLEAVE', label: 'Berievement Leave' },
+    { value: 'VACATIONLEAVE', label: 'Vacation Leave' }
+  ];
+
   return (
     <PageContainer scrollable={false}>
       <div className='flex flex-1 flex-col space-y-4'>
@@ -52,9 +58,3 @@ export default async function Page(props: pageProps) {
     </PageContainer>
   );
 }
-
-const FILTER_OPTIONS = [
-  { value: 'SICKLEAVE', label: 'Sick Leave' },
-  { value: 'BERIEVEMENTLEAVE', label: 'Berievement Leave' },
-  { value: 'VACATIONLEAVE', label: 'Vacation Leave' }
-];
