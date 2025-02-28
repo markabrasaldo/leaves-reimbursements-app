@@ -4,7 +4,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Leaves } from '../types';
+import { Leave } from '../types';
 import { formatDate } from '@/app/utils/formatDate';
 
 const getLeaveTypeColor = (leaveType: string): string => {
@@ -29,7 +29,7 @@ const getStatusColor = (status: string): string => {
   return colorMap[status] || colorMap.default;
 };
 
-export const columns: ColumnDef<Leaves>[] = [
+export const columns: ColumnDef<Leave>[] = [
   {
     accessorKey: 'user_email',
     header: ({ column }) => {
@@ -59,7 +59,8 @@ export const columns: ColumnDef<Leaves>[] = [
     accessorKey: 'leave_type.name',
     header: 'Leave Type',
     cell: ({ row }) => {
-      const leaveType = row.original.leave_type_name;
+      console.log('row.original', row.original);
+      const leaveType = row.original.leave_type.name;
       return <span className={getLeaveTypeColor(leaveType)}>{leaveType}</span>;
     }
   },

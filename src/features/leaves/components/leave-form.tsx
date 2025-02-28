@@ -91,7 +91,7 @@ export function LeaveForm({
   const isAdmin = data?.user?.role === ('Administrator' as unknown as Roles);
   const userAllowedToCancel =
     data?.user?.user_id === initialData?.user_id &&
-    initialData?.status !== 'REJECTED';
+    initialData?.status === 'APPROVED';
 
   const [isMobile, setIsMobile] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -159,19 +159,7 @@ export function LeaveForm({
     <Card className='mx-auto w-full'>
       <CardHeader>
         <CardTitle className='text-left text-2xl font-bold'>
-          <div className='flex flex-row justify-between'>
-            {pageTitle}
-            {userAllowedToCancel && (
-              <Button
-                className={cn('border-red-400 text-red-400')}
-                variant='outline'
-                type='button'
-                onClick={() => handleLeaveActionsRequest('cancel')}
-              >
-                Cancel
-              </Button>
-            )}
-          </div>
+          <div className='flex flex-row justify-between'>{pageTitle}</div>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -319,6 +307,17 @@ export function LeaveForm({
                     Edit
                   </Button>
                 </>
+              )}
+
+              {userAllowedToCancel && (
+                <Button
+                  className={cn('border-red-400 text-red-400')}
+                  variant='outline'
+                  type='button'
+                  onClick={() => handleLeaveActionsRequest('cancel')}
+                >
+                  Cancel Request
+                </Button>
               )}
 
               {isEditing && (

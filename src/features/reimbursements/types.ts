@@ -30,6 +30,7 @@ export interface Reimbursement {
   updated_by: Date | string;
   attachments: Attachment[];
   description?: string;
+  reimbursement_type_code: string;
 }
 
 export interface ReimbursementsResponse {
