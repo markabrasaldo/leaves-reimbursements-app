@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CircuitBoardIcon,
+  ClockAlert,
   Command,
   CreditCard,
   File,
@@ -25,12 +26,18 @@ import {
   Settings,
   SunMedium,
   Trash,
+  TrendingUp,
   Twitter,
   User,
   UserCircle2Icon,
   UserPen,
+  UserPlus,
   UserX2Icon,
-  X
+  X,
+  ClockArrowDown,
+  HandCoins,
+  FolderDown,
+  Calendar
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -82,5 +89,13 @@ export const Icons = {
     </svg>
   ),
   twitter: Twitter,
-  check: Check
+  check: Check,
+  trendingUp: TrendingUp,
+  clockAlert: ClockAlert,
+  userPlus: UserPlus,
+  clockArrowDown: ClockArrowDown,
+  reimbursement: HandCoins,
+  leaves: UserX2Icon,
+  calendar: Calendar,
+  download: FolderDown
 };

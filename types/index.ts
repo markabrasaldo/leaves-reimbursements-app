@@ -1,4 +1,5 @@
 import { Icons } from '@/components/icons';
+import { User } from 'next-auth';
 
 export interface NavItem {
   title: string;
@@ -28,6 +29,45 @@ export interface FooterItem {
     href: string;
     external?: boolean;
   }[];
+}
+
+export interface CardItem {
+  cardButton?: boolean;
+  cardButtonText?: string;
+  cardTitle: string;
+  cardValue: string | number | undefined;
+  cardIcon: keyof typeof Icons;
+  cardSubText?: string;
+  trending: 'up' | 'down';
+}
+
+export interface TableFilter {
+  [key: string]: string | number;
+}
+
+export interface Roles {
+  role: 'Administrator' | 'User' | 'Member';
+}
+
+export interface LeaveBalanceType {
+  balance: number;
+  convertible_balance: number;
+  leave_type_id: string;
+  leave_type_name: string;
+}
+
+export interface Organization {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+}
+
+export interface PaginationTypes {
+  limit: string;
+  page: string;
+  totalCount: number;
+  totalPage: number;
 }
 
 export type MainNavItem = NavItemWithOptionalChildren;

@@ -3,15 +3,31 @@
 // https://nextjs.org/docs/app/building-your-application/routing/middleware
 
 import NextAuth from 'next-auth';
-import authConfig from '@/lib/auth.config';
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { authConfig } from './lib/auth.config';
 
 const { auth } = NextAuth(authConfig);
 
-export default auth((req) => {
-  if (!req.auth) {
-    const url = req.url.replace(req.nextUrl.pathname, '/');
-    return Response.redirect(url);
+const protectedRoutes = ['/dashboard'];
+
+export default auth(async (request: NextRequest) => {
+  const path = request.nextUrl.pathname.split('/')[1];
+
+  const isProtectedRoute = protectedRoutes.includes(`/${path}`);
+  const cookie = (await cookies()).get('authjs.session-token')?.value;
+
+  if (
+    isProtectedRoute &&
+    !cookie
+    // && !session?.userId // check userId
+  ) {
+    return NextResponse.redirect(new URL('/', request.nextUrl));
   }
+
+  return NextResponse.next();
 });
 
-export const config = { matcher: ['/dashboard/:path*'] };
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)']
+};

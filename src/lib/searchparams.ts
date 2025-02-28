@@ -6,12 +6,12 @@ import {
 } from 'nuqs/server';
 
 export const searchParams = {
-  page: parseAsInteger.withDefault(1),
-  limit: parseAsInteger.withDefault(10),
+  page: parseAsInteger,
+  limit: parseAsInteger,
   q: parseAsString,
-  gender: parseAsString,
-  categories: parseAsString
+  status: parseAsString
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);
+
 export const serialize = createSerializer(searchParams);

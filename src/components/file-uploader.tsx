@@ -124,6 +124,15 @@ export function FileUploader(props: FileUploaderProps) {
         return;
       }
 
+      if (
+        files?.length &&
+        acceptedFiles.length &&
+        files.some((file) => file.name === acceptedFiles[0].name)
+      ) {
+        toast.error(`Cannot upload duplicate file`);
+        return;
+      }
+
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file)
@@ -207,6 +216,7 @@ export function FileUploader(props: FileUploaderProps) {
             {...dropzoneProps}
           >
             <input {...getInputProps()} />
+
             {isDragActive ? (
               <div className='flex flex-col items-center justify-center gap-4 sm:px-5'>
                 <div className='rounded-full border border-dashed p-3'>

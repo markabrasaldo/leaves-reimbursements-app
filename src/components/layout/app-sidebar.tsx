@@ -8,7 +8,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -32,19 +31,18 @@ import {
 } from '@/components/ui/sidebar';
 import { navItems } from '@/constants/data';
 import {
-  BadgeCheck,
-  Bell,
   ChevronRight,
   ChevronsUpDown,
-  CreditCard,
   GalleryVerticalEnd,
   LogOut
 } from 'lucide-react';
-import { signOut, useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import * as React from 'react';
 import { Icons } from '../icons';
+import { signOutAction } from '@/lib/auth-action';
+import { useActionState, useEffect, useState } from 'react';
+import { Button } from '../ui/button';
 
 export const company = {
   name: 'Acme Inc',
@@ -54,8 +52,22 @@ export const company = {
 
 export default function AppSidebar() {
   const { data: session } = useSession();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      await getSession(); // Re-fetch session on load
+    };
+
+    checkSession();
+  }, []);
+
   const pathname = usePathname();
   const { state, isMobile } = useSidebar();
+
+  const [_formState, formAction, isPending] = useActionState(
+    signOutAction,
+    undefined
+  );
 
   return (
     <Sidebar collapsible='icon'>
@@ -65,8 +77,10 @@ export default function AppSidebar() {
             <company.logo className='size-4' />
           </div>
           <div className='grid flex-1 text-left text-sm leading-tight'>
-            <span className='truncate font-semibold'>{company.name}</span>
-            <span className='truncate text-xs'>{company.plan}</span>
+            <span className='truncate font-semibold'>
+              {session?.user?.organization?.name}
+            </span>
+            {/* <span className='truncate text-xs'>{session.plan}</span> */}
           </div>
         </div>
       </SidebarHeader>
@@ -145,13 +159,14 @@ export default function AppSidebar() {
                       alt={session?.user?.name || ''}
                     />
                     <AvatarFallback className='rounded-lg'>
-                      {session?.user?.name?.slice(0, 2)?.toUpperCase() || 'CN'}
+                      {/* {session?.user?.name?.slice(0, 2)?.toUpperCase() || 'CN'} */}
+                      {session?.user?.email?.slice(0, 2)?.toUpperCase() || 'CN'}
                     </AvatarFallback>
                   </Avatar>
                   <div className='grid flex-1 text-left text-sm leading-tight'>
-                    <span className='truncate font-semibold'>
+                    {/* <span className='truncate font-semibold'>
                       {session?.user?.name || ''}
-                    </span>
+                    </span> */}
                     <span className='truncate text-xs'>
                       {session?.user?.email || ''}
                     </span>
@@ -173,16 +188,17 @@ export default function AppSidebar() {
                         alt={session?.user?.name || ''}
                       />
                       <AvatarFallback className='rounded-lg'>
-                        {session?.user?.name?.slice(0, 2)?.toUpperCase() ||
+                        {/* {session?.user?.name?.slice(0, 2)?.toUpperCase() ||
+                          'CN'} */}
+                        {session?.user?.email?.slice(0, 2)?.toUpperCase() ||
                           'CN'}
                       </AvatarFallback>
                     </Avatar>
                     <div className='grid flex-1 text-left text-sm leading-tight'>
-                      <span className='truncate font-semibold'>
+                      {/* <span className='truncate font-semibold'>
                         {session?.user?.name || ''}
-                      </span>
+                      </span> */}
                       <span className='truncate text-xs'>
-                        {' '}
                         {session?.user?.email || ''}
                       </span>
                     </div>
@@ -190,7 +206,7 @@ export default function AppSidebar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
-                <DropdownMenuGroup>
+                {/* <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <BadgeCheck />
                     Account
@@ -204,11 +220,20 @@ export default function AppSidebar() {
                     Notifications
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
-                  <LogOut />
-                  Log out
-                </DropdownMenuItem>
+                <DropdownMenuSeparator /> */}
+                <form action={formAction}>
+                  <DropdownMenuItem>
+                    <Button
+                      type='submit'
+                      className='w-full'
+                      variant={'ghost'}
+                      disabled={isPending}
+                    >
+                      <LogOut />
+                      Log out{' '}
+                    </Button>
+                  </DropdownMenuItem>
+                </form>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

@@ -2,6 +2,7 @@
 // 🛑 Nothing in here has anything to do with Nextjs, it's just a fake database
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Reimbursement } from '@/features/reimbursements/types';
 import { faker } from '@faker-js/faker';
 import { matchSorter } from 'match-sorter'; // For filtering
 
@@ -155,3 +156,201 @@ export const fakeProducts = {
 
 // Initialize sample products
 fakeProducts.initialize();
+
+//Users
+export function createRandomUser() {
+  return {
+    id: faker.string.uuid(),
+    organization_id: faker.string.uuid(),
+    email: faker.internet.email(),
+    username: faker.internet.username(),
+    name: faker.person.fullName(),
+    role: faker.person.jobTitle(),
+    attachments: faker.image.avatar(),
+    registeredAt: faker.date.past()
+  };
+}
+
+export const users = faker.helpers.multiple(createRandomUser, {
+  count: 5
+});
+
+const reimbursementStatus = [
+  'DRAFT',
+  'SUBMITTED',
+  'APPROVED',
+  'REJECTED',
+  'REIMBURSED'
+];
+
+const reimName = [
+  'Travel',
+  'Transportation',
+  'Food',
+  'Training',
+  'Certification'
+];
+
+export const reimbursementType = [
+  {
+    id: faker.string.uuid(),
+    organization_id: faker.string.uuid(),
+    code: `${'REIM'}-${faker.number.int()}`,
+    name: 'Travel',
+    description: faker.finance.transactionDescription()
+  },
+  {
+    id: faker.string.uuid(),
+    organization_id: faker.string.uuid(),
+    code: `${'REIM'}-${faker.number.int()}`,
+    name: 'Transportation',
+    description: faker.finance.transactionDescription()
+  },
+  {
+    id: faker.string.uuid(),
+    organization_id: faker.string.uuid(),
+    code: `${'REIM'}-${faker.number.int()}`,
+    name: 'Food',
+    description: faker.finance.transactionDescription()
+  },
+  {
+    id: faker.string.uuid(),
+    organization_id: faker.string.uuid(),
+    code: `${'REIM'}-${faker.number.int()}`,
+    name: 'Training',
+    description: faker.finance.transactionDescription()
+  },
+  {
+    id: faker.string.uuid(),
+    organization_id: faker.string.uuid(),
+    code: `${'REIM'}-${faker.number.int()}`,
+    name: 'Certification',
+    description: faker.finance.transactionDescription()
+  }
+];
+
+// reimbursement
+export function createRandomReimbursement(tempId?: number) {
+  return {
+    tempId,
+    id: faker.string.uuid(),
+    reimbursementType: {
+      reimbursement_type_id: faker.string.uuid(),
+      name: faker.helpers.arrayElement(reimName),
+      code: `${'REIM'}-${faker.number.int()}`
+    },
+    organization: {
+      organization_id: faker.string.uuid(),
+      name: faker.company.name()
+    },
+    date: faker.date.anytime(),
+    amount: Number(faker.finance.amount()),
+    status: faker.helpers.arrayElement(reimbursementStatus),
+    created_at: faker.date.anytime().toISOString(),
+    updated_at: faker.date.anytime().toISOString(),
+    created_by: faker.string.uuid(),
+    updated_by: faker.string.uuid(),
+    attachment: [
+      {
+        id: faker.string.uuid(),
+        reimbursement_application_id: faker.string.uuid(),
+        file_name: `Image-${faker.string.alphanumeric()}`,
+        file_type: 'image/png',
+        file_url: faker.image.url()
+      },
+      {
+        id: faker.string.uuid(),
+        reimbursement_application_id: faker.string.uuid(),
+        file_name: `Image-${faker.string.alphanumeric()}`,
+        file_type: 'image/png',
+        file_url: faker.image.url()
+      },
+      {
+        id: faker.string.uuid(),
+        reimbursement_application_id: faker.string.uuid(),
+        file_name: `Image-${faker.string.alphanumeric()}`,
+        file_type: 'image/png',
+        file_url: faker.image.url()
+      }
+    ]
+  };
+}
+
+export const fakeReimbursements = {
+  sampleReimbursements: [] as Reimbursement[],
+  generate() {
+    const generatedReimbursementList: Reimbursement[] = [];
+
+    for (let i = 1; i <= 50; i++) {
+      generatedReimbursementList.push(createRandomReimbursement(i));
+    }
+
+    this.sampleReimbursements = generatedReimbursementList;
+  },
+  async getReimbursementList() {
+    return [...this.sampleReimbursements];
+  },
+
+  async getReimbursementListById(reimbursementId: number) {
+    await delay(1500);
+
+    const reimbursement = this.sampleReimbursements.find((reimbursement) => {
+      return reimbursement.tempId === reimbursementId;
+    });
+
+    if (!reimbursement) {
+      return {
+        messageType: 'error',
+        message: 'No record found'
+      };
+    }
+
+    return reimbursement;
+  }
+};
+
+fakeReimbursements.generate();
+
+// leaves
+const leaveType = [
+  'Sick Leave',
+  'Vacation Leave',
+  'Bereavement Leave',
+  'Sabbatical Leave',
+  'Maternity leave'
+];
+
+const leaveStatus = ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED', 'CANCELED'];
+
+let idCounter = 1;
+
+export function createRandomLeaves() {
+  const idNumber = idCounter++;
+
+  return {
+    id: idNumber,
+    name: faker.helpers.arrayElement(reimbursementType),
+    leave_type: {
+      leave_type_id: faker.string.uuid(),
+      code: faker.string.alpha(4),
+      name: faker.helpers.arrayElement(leaveType)
+    },
+    organization: {
+      organization_id: faker.string.uuid(),
+      name: faker.company.name()
+    },
+    start_date: faker.date
+      .between({ from: '2022-01-01', to: '2023-12-31' })
+      .toISOString(),
+    end_date: faker.date
+      .between({ from: '2022-01-01', to: '2023-12-31' })
+      .toISOString(),
+    days_applied: faker.number.int(12),
+    reason: faker.lorem.sentence(),
+    status: faker.helpers.arrayElement(leaveStatus)
+  };
+}
+
+export const leaves = faker.helpers.multiple(createRandomLeaves, {
+  count: 50
+});
