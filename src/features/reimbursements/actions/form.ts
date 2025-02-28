@@ -17,6 +17,8 @@ export async function submitForm(
 
   const attachments = formData.getAll('attachments');
 
+  console.log('files', attachments);
+
   const validatedReimbursementFormData = schema.safeParse(
     reimbursementFormData
   );
@@ -43,6 +45,8 @@ export async function submitForm(
       amount: Number(reimbursementFormData.amount)
     };
 
+    console.log('create reim', payload);
+
     const response = await fetch(
       `${baseUrl}/${organization?.code}/reimbursement${isStatusDraft ? `/${reimbursementFormData?.leaveId}` : ''}`,
       {
@@ -65,16 +69,30 @@ export async function submitForm(
       };
     }
 
+    console.log('upload image', attachments);
+
+    const uploadPayload = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ files: attachments })
+    };
+
+    console.log('uploadPayload', uploadPayload);
+
     const uploadImageResponse = await fetch(
       `${baseUrl}/${organization?.code}/reimbursement/${result.data.id}/upload`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ attachments })
-      }
+      uploadPayload
+      // {
+      //   method: 'POST',
+      //   headers: {
+      //     Authorization: `Bearer ${accessToken}`,
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({ files: attachments })
+      // }
     );
 
     const uploadImageResult = await uploadImageResponse.json();

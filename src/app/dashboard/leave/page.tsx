@@ -31,7 +31,12 @@ export default async function Page(props: pageProps) {
   const FILTER_OPTIONS = [
     { value: 'SICKLEAVE', label: 'Sick Leave' },
     { value: 'BERIEVEMENTLEAVE', label: 'Berievement Leave' },
-    { value: 'VACATIONLEAVE', label: 'Vacation Leave' }
+    { value: 'VACATIONLEAVE', label: 'Vacation Leave' },
+    { value: 'DRAFT', label: 'Draft' },
+    { value: 'SUBMITTED', label: 'Submitted' },
+    { value: 'APPROVED', label: 'Approved' },
+    { value: 'REJECTED', label: 'Rejected' },
+    { value: 'REIMBURSED', label: 'Reimbursed' }
   ];
 
   return (

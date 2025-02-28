@@ -1,6 +1,5 @@
 import { NextAuthConfig } from 'next-auth';
 import CredentialProvider from 'next-auth/providers/credentials';
-import { revalidatePath } from 'next/cache';
 import getConfig from 'next/config';
 import { Roles, LeaveBalanceType, Organization } from 'types';
 import { z } from 'zod';
@@ -66,8 +65,6 @@ const authConfig = {
               ...userTokenDetails,
               accessToken: responseData.token
             };
-
-            revalidatePath('/dashboard');
 
             return user;
           }

@@ -11,13 +11,13 @@ export default async function ProductListingPage({}: ProductListingPage) {
   const page = searchParamsCache.get('page');
   const search = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
-  const categories = searchParamsCache.get('status');
+  const status = searchParamsCache.get('status');
 
   const filters = {
-    page,
-    limit: pageLimit,
+    ...(page && { page }),
+    ...(pageLimit && { limit: pageLimit }),
     ...(search && { search }),
-    ...(categories && { categories: categories })
+    ...(status && { status: status })
   };
 
   const data = await fakeProducts.getProducts(filters);

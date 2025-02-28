@@ -14,6 +14,8 @@ export const columns: ColumnDef<Reimbursement>[] = [
     accessorKey: 'reimbursementType',
     header: 'Reimbursement Type',
     cell: ({ row }) => {
+      console.log('row.original', row.original);
+
       return (
         <Link
           href={`/dashboard/reimbursement/${row.original.id}`}

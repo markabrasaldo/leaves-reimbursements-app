@@ -276,41 +276,6 @@ export function createRandomReimbursement(tempId?: number) {
   };
 }
 
-export const fakeReimbursements = {
-  sampleReimbursements: [] as Reimbursement[],
-  generate() {
-    const generatedReimbursementList: Reimbursement[] = [];
-
-    for (let i = 1; i <= 50; i++) {
-      generatedReimbursementList.push(createRandomReimbursement(i));
-    }
-
-    this.sampleReimbursements = generatedReimbursementList;
-  },
-  async getReimbursementList() {
-    return [...this.sampleReimbursements];
-  },
-
-  async getReimbursementListById(reimbursementId: number) {
-    await delay(1500);
-
-    const reimbursement = this.sampleReimbursements.find((reimbursement) => {
-      return reimbursement.tempId === reimbursementId;
-    });
-
-    if (!reimbursement) {
-      return {
-        messageType: 'error',
-        message: 'No record found'
-      };
-    }
-
-    return reimbursement;
-  }
-};
-
-fakeReimbursements.generate();
-
 // leaves
 const leaveType = [
   'Sick Leave',
