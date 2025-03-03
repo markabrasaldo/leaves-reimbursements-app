@@ -17,6 +17,7 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
+import useRole from '@/hooks/use-role';
 const chartData = [
   { attendance: 'sickLeave', count: 20, fill: 'var(--color-sickLeave)' },
   {
@@ -54,7 +55,8 @@ const chartConfig = {
   }
 } satisfies ChartConfig;
 
-export function AttendancePieGraph() {
+export function LeavesPieGraph() {
+  const { isAdmin } = useRole();
   const totalVisitors = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.count, 0);
   }, []);
@@ -62,7 +64,7 @@ export function AttendancePieGraph() {
   return (
     <Card className='flex flex-col'>
       <CardHeader className='items-center pb-0'>
-        <CardTitle>Pie Chart - Attendance</CardTitle>
+        <CardTitle>{`${isAdmin ? 'Leaves' : 'My Leaves'}`}</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className='flex-1 pb-0'>
@@ -97,14 +99,14 @@ export function AttendancePieGraph() {
                           y={viewBox.cy}
                           className='fill-foreground text-3xl font-bold'
                         >
-                          {totalVisitors.toLocaleString()}
+                          {isAdmin ? totalVisitors.toLocaleString() : 12}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
                           className='fill-muted-foreground'
                         >
-                          Man days
+                          Total Leaves
                         </tspan>
                       </text>
                     );
@@ -117,7 +119,7 @@ export function AttendancePieGraph() {
       </CardContent>
       <CardFooter className='flex-col gap-2 text-sm'>
         <div className='flex items-center gap-2 font-medium leading-none'>
-          Showing total attendance for the last 6 months
+          {`${isAdmin ? 'Showing total attendance for the last 6 months' : `This ${'6 months'} leaves count`}`}
         </div>
       </CardFooter>
     </Card>

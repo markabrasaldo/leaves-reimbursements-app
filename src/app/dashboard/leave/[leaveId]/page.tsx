@@ -1,9 +1,9 @@
-import FormCardSkeleton from '@/components/form-card-skeleton';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
 import { getSessionDetails } from '@/app/utils/getSessionDetails';
 import getConfig from 'next/config';
 import LeaveViewPage from '@/features/leaves/components/leave-view-page';
+import FormCardSkeleton from '@/components/form/form-card-skeleton';
 
 export const metadata = {
   title: 'Dashboard : Leave View'

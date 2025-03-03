@@ -11,13 +11,17 @@ interface FilterOption {
 }
 
 export default function TableAction({
-  filterOption
+  filterStatusOption,
+  filterLeaveOption
 }: {
-  filterOption: FilterOption[];
+  filterStatusOption?: FilterOption[];
+  filterLeaveOption?: FilterOption[];
 }) {
   const {
-    categoriesFilter,
-    setCategoriesFilter,
+    statusFilter,
+    setStatusFilter,
+    leaveFilter,
+    setLeaveFilter,
     isAnyFilterActive,
     resetFilters,
     searchQuery,
@@ -32,13 +36,25 @@ export default function TableAction({
         setSearchQuery={setSearchQuery}
         setPage={setPage}
       />
-      <DataTableFilterBox
-        filterKey='status'
-        title='Categories'
-        options={filterOption}
-        setFilterValue={setCategoriesFilter}
-        filterValue={categoriesFilter}
-      />
+      {filterStatusOption && (
+        <DataTableFilterBox
+          filterKey='status'
+          title='Status'
+          options={filterStatusOption}
+          setFilterValue={setStatusFilter}
+          filterValue={statusFilter}
+        />
+      )}
+      {filterLeaveOption && (
+        <DataTableFilterBox
+          filterKey='leave'
+          title='Leave'
+          options={filterLeaveOption}
+          setFilterValue={setLeaveFilter}
+          filterValue={leaveFilter}
+        />
+      )}
+
       <DataTableResetFilter
         isFilterActive={isAnyFilterActive}
         onReset={resetFilters}

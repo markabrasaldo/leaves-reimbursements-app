@@ -14,8 +14,6 @@ export const columns: ColumnDef<Reimbursement>[] = [
     accessorKey: 'reimbursementType',
     header: 'Reimbursement Type',
     cell: ({ row }) => {
-      console.log('row.original', row.original);
-
       return (
         <Link
           href={`/dashboard/reimbursement/${row.original.id}`}
@@ -24,8 +22,7 @@ export const columns: ColumnDef<Reimbursement>[] = [
             'mt-0 space-y-0 p-0 text-inherit underline underline-offset-4'
           )}
         >
-          {/* {row.original.reimbursement_type.name} */}
-          {row.original['reimbursement_type_code']}
+          {row.original.reimbursement_type.name}
         </Link>
       );
     }
@@ -35,6 +32,13 @@ export const columns: ColumnDef<Reimbursement>[] = [
     header: 'Amount',
     cell: ({ row }) => {
       return `₱${row.original.amount}`;
+    }
+  },
+  {
+    accessorKey: 'organization',
+    header: 'Organization',
+    cell: ({ row }) => {
+      return row.original.organization.name;
     }
   },
   {

@@ -6,17 +6,18 @@ import React from 'react';
 
 export default async function OverViewLayout({
   sales,
-  pie_stats,
-  bar_stats,
-  area_stats,
+  leaves_pie_stats,
+  reimbursement_bar_stats,
+  reimbursement_area_stats,
   employees,
   reimbursements,
   leaves,
   leave_balance
 }: {
   sales: React.ReactNode;
-  pie_stats: React.ReactNode;
-  bar_stats: React.ReactNode;
+  leaves_pie_stats: React.ReactNode;
+  reimbursement_bar_stats: React.ReactNode;
+  reimbursement_area_stats: React.ReactNode;
   area_stats: React.ReactNode;
   employees: React.ReactNode;
   reimbursements: React.ReactNode;
@@ -53,23 +54,20 @@ export default async function OverViewLayout({
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
           {isAdmin ? (
             <>
-              <div className='col-span-4 grid auto-rows-fr'>
-                {reimbursements}
-              </div>
+              <div className='col-span-4'>{reimbursement_area_stats}</div>
               <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
-                {leaves}
+                {leaves_pie_stats}
               </div>
-              <div className='col-span-4 grid auto-rows-fr'>{employees}</div>
+              <div className='col-span-4'>{reimbursement_bar_stats}</div>
               <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
-                {pie_stats}
+                {employees}
               </div>
-              <div className='col-span-4'>{bar_stats}</div>
             </>
           ) : (
             <>
-              <div className='col-span-4 grid auto-rows-fr'>{leaves}</div>
+              <div className='col-span-4'>{reimbursement_area_stats}</div>
               <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
-                {reimbursements}
+                {leaves_pie_stats}
               </div>
               <div className='col-span-4'>{leave_balance}</div>
             </>

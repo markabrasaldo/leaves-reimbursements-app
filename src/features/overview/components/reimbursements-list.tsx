@@ -61,8 +61,7 @@ export async function ReimbursementsList() {
               <div className='flex items-center' key={reimbursement.id}>
                 <div className='ml-4 space-y-1'>
                   <p className='text-base font-medium leading-none'>
-                    {/* {reimbursement.reimbursement_type.name} */}
-                    {(reimbursement as any).reimbursement_type_code}
+                    {reimbursement.reimbursement_type.name}
                   </p>
                   <p className='text-xs text-muted-foreground'>
                     {reimbursement.status}

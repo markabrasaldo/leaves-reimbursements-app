@@ -12,8 +12,18 @@ export function useTableFilters() {
       .withDefault('')
   );
 
-  const [categoriesFilter, setCategoriesFilter] = useQueryState(
+  const [statusFilter, setStatusFilter] = useQueryState(
     'status',
+    searchParams.status.withOptions({ shallow: false }).withDefault('')
+  );
+
+  const [leaveFilter, setLeaveFilter] = useQueryState(
+    'leave_type',
+    searchParams.status.withOptions({ shallow: false }).withDefault('')
+  );
+
+  const [orderFilter, setOrderFilter] = useQueryState(
+    'order',
     searchParams.status.withOptions({ shallow: false }).withDefault('')
   );
 
@@ -24,14 +34,14 @@ export function useTableFilters() {
 
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
-    setCategoriesFilter(null);
+    setStatusFilter(null);
 
     setPage(1);
-  }, [setSearchQuery, setCategoriesFilter, setPage]);
+  }, [setSearchQuery, setStatusFilter, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!searchQuery || !!categoriesFilter;
-  }, [searchQuery, categoriesFilter]);
+    return !!searchQuery || !!statusFilter;
+  }, [searchQuery, statusFilter]);
 
   return {
     searchQuery,
@@ -40,7 +50,11 @@ export function useTableFilters() {
     setPage,
     resetFilters,
     isAnyFilterActive,
-    categoriesFilter,
-    setCategoriesFilter
+    statusFilter,
+    setStatusFilter,
+    leaveFilter,
+    setLeaveFilter,
+    orderFilter,
+    setOrderFilter
   };
 }

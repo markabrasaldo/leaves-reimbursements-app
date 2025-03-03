@@ -28,7 +28,7 @@ export default async function Page(props: pageProps) {
   // This key is used for invoke suspense if any of the search params changed (used for filters).
   const key = serialize({ ...searchParams });
 
-  const FILTER_OPTIONS = [
+  const FILTER_STATUS_OPTIONS = [
     { value: 'DRAFT', label: 'Draft' },
     { value: 'SUBMITTED', label: 'Submitted' },
     { value: 'APPROVED', label: 'Approved' },
@@ -49,7 +49,7 @@ export default async function Page(props: pageProps) {
           </Link>
         </div>
         <Separator />
-        <TableAction filterOption={FILTER_OPTIONS} />
+        <TableAction filterStatusOption={FILTER_STATUS_OPTIONS} />
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
