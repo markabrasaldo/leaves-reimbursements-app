@@ -57,12 +57,16 @@ export default async function LeavesListPage() {
   const search = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
   const status = searchParamsCache.get('status');
+  const leave_type = searchParamsCache.get('leave_type');
+  const order = searchParamsCache.get('order');
 
   const filters = {
     ...(page && { page }),
     ...(pageLimit && { limit: pageLimit }),
     ...(search && { search }),
-    ...(status && { status: status })
+    ...(status && { status }),
+    ...(leave_type && { leave_type }),
+    ...(order && { order })
   };
 
   const { data, meta } = await getLeaves(filters);

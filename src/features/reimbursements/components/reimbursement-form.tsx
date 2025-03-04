@@ -1,7 +1,7 @@
 'use client';
 
 import { startTransition, useActionState, useEffect, useRef } from 'react';
-import { FileUploader } from '@/components/file-uploader';
+import { FileUploader } from '@/components/form/file-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -115,7 +115,7 @@ export default function ReimbursementForm({
 
     if (attachments && attachments.length) {
       for (let i = 0; i < attachments.length; i++) {
-        formData.append('attachments', attachments[i], attachments[i].name);
+        formData.append('files', attachments[i], attachments[i].name);
       }
     }
 
@@ -260,7 +260,7 @@ export default function ReimbursementForm({
                     ? 'Please wait ...'
                     : initialData
                       ? 'Submit'
-                      : 'Add Reimbursement'}
+                      : 'Save as draft'}
                 </Button>
               )}
             </div>

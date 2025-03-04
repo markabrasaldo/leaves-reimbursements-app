@@ -37,6 +37,7 @@ import { redirect } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Roles } from 'next-auth';
 import { cn } from '@/lib/utils';
+import { Textarea } from '@/components/ui/textarea';
 
 export function LeaveForm({
   leaveTypesData,
@@ -47,6 +48,10 @@ export function LeaveForm({
   initialData: Leave | null;
   pageTitle: string;
 }) {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isRejecting, setRejectStatus] = useState(false);
+
   const [state, formAction, isPending] = useActionState(submitForm, {
     status: '',
     message: '',
@@ -75,8 +80,13 @@ export function LeaveForm({
       initialData?.leave_type?.id ||
       (state?.formData?.leaveType as string) ||
       '',
+    descriptions:
+      initialData?.descriptions ||
+      (state?.formData?.descriptions as string) ||
+      '',
     remarks: initialData?.remarks || (state?.formData?.remarks as string) || '',
-    status: initialData?.status || ''
+    status: initialData?.status || '',
+    daysApplied: initialData?.days_applied || 0
   };
 
   const form = useForm<z.infer<typeof schema>>({
@@ -84,17 +94,24 @@ export function LeaveForm({
     values: defaultValues
   });
 
-  //will refactor below code into a dropdown provider
+  //Note: refactor below code into a dropdown provider
   const { leaveTypes, initializeLeaveTypes } = useLeaveStore();
 
   const { data } = useSession();
+
+  const createdLeaveRequestStatus = [
+    'DRAFT',
+    'SUBMITTED',
+    'APPROVED',
+    'REJECTED',
+    'CANCEL'
+  ].includes(initialData?.status as string);
+
+  const fieldsDisabled = !isEditing && createdLeaveRequestStatus;
   const isAdmin = data?.user?.role === ('Administrator' as unknown as Roles);
   const userAllowedToCancel =
     data?.user?.user_id === initialData?.user_id &&
     initialData?.status === 'APPROVED';
-
-  const [isMobile, setIsMobile] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (state?.status) {
@@ -136,24 +153,18 @@ export function LeaveForm({
 
   const handleLeaveActionsRequest = async (action: string) => {
     const formData = new FormData();
-
     formData.append('action', action);
     formData.append('leaveId', initialData?.id as string);
+    formData.append('remarks', remarksInputValue as string);
+
+    const leavesFormData = Object.fromEntries(formData);
 
     startTransition(() => {
       leaveRequestAction(formData);
     });
   };
 
-  const createdLeaveRequestStatus = [
-    'DRAFT',
-    'SUBMITTED',
-    'APPROVED',
-    'REJECTED',
-    'CANCEL'
-  ].includes(initialData?.status as string);
-
-  const fieldsDisabled = !isEditing && createdLeaveRequestStatus;
+  const remarksInputValue = form.watch('remarks');
 
   return (
     <Card className='mx-auto w-full'>
@@ -201,86 +212,152 @@ export function LeaveForm({
                   );
                 }}
               />
-
-              <FormField
-                control={form.control}
-                name='remarks'
-                disabled={fieldsDisabled}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Remarks</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='startDate'
-                disabled={fieldsDisabled}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Start Date</FormLabel>
-                    <FormControl>
-                      <Input type='date' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='endDate'
-                disabled={fieldsDisabled}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>End Date</FormLabel>
-                    <FormControl>
-                      <Input type='date' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {initialData?.status && (
+              <div className='col-span-2 grid grid-cols-subgrid gap-4'>
                 <FormField
                   control={form.control}
-                  name='status'
-                  disabled={true}
+                  name='startDate'
+                  disabled={fieldsDisabled}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Status</FormLabel>
+                      <FormLabel>Start Date</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input type='date' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name='endDate'
+                  disabled={fieldsDisabled}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Date</FormLabel>
+                      <FormControl>
+                        <Input type='date' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {createdLeaveRequestStatus && (
+                <div className='col-span-2 grid grid-cols-subgrid gap-4'>
+                  <FormField
+                    control={form.control}
+                    name='status'
+                    disabled={true}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='daysApplied'
+                    disabled={true}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Days Applied</FormLabel>
+                        <FormControl>
+                          <Input type='number' {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
+              <div className='col-span-full'>
+                <FormField
+                  control={form.control}
+                  name='descriptions'
+                  disabled={fieldsDisabled}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Leave reason</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {(isRejecting || initialData?.status === 'REJECTED') && (
+                <div className='col-span-full'>
+                  <FormField
+                    control={form.control}
+                    name='remarks'
+                    disabled={!isRejecting}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Remarks (Min. 6 characters)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               )}
             </div>
 
             <div className='space-x-2'>
-              {initialData?.status === 'SUBMITTED' && isAdmin && (
+              {/* Start of buttons for approval scenario. */}
+              {initialData?.status === 'SUBMITTED' &&
+                !isRejecting &&
+                isAdmin && (
+                  <>
+                    <Button
+                      type='button'
+                      onClick={() => handleLeaveActionsRequest('approve')}
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      type='button'
+                      onClick={() => setRejectStatus((prev) => !prev)}
+                    >
+                      Reject
+                    </Button>
+                  </>
+                )}
+
+              {isRejecting && isAdmin && (
                 <>
                   <Button
                     type='button'
-                    onClick={() => handleLeaveActionsRequest('approve')}
+                    disabled={
+                      !remarksInputValue || remarksInputValue.length < 6
+                    }
+                    onClick={() => {
+                      handleLeaveActionsRequest('reject');
+                    }}
                   >
-                    Approve
+                    Proceed to Reject
                   </Button>
                   <Button
                     type='button'
-                    onClick={() => handleLeaveActionsRequest('reject')}
+                    onClick={() => setRejectStatus((prev) => !prev)}
                   >
-                    Reject
+                    Cancel
                   </Button>
                 </>
               )}
+              {/* End of buttons for approval scenario. */}
 
+              {/* Start of button for positng leaves. */}
               {!createdLeaveRequestStatus && (
                 <Button type='submit' disabled={isPending}>
                   {isPending
@@ -290,7 +367,9 @@ export function LeaveForm({
                       : 'Request Leave'}
                 </Button>
               )}
+              {/* End of button for positng leaves. */}
 
+              {/* Start of button for updating draft leaves. */}
               {initialData?.status === 'DRAFT' && !isEditing && (
                 <>
                   <Button
@@ -309,17 +388,6 @@ export function LeaveForm({
                 </>
               )}
 
-              {userAllowedToCancel && (
-                <Button
-                  className={cn('border-red-400 text-red-400')}
-                  variant='outline'
-                  type='button'
-                  onClick={() => handleLeaveActionsRequest('cancel')}
-                >
-                  Cancel Request
-                </Button>
-              )}
-
               {isEditing && (
                 <>
                   <Button type='submit' disabled={isPending}>
@@ -333,6 +401,20 @@ export function LeaveForm({
                   </Button>
                 </>
               )}
+              {/* End of button for updating draft leaves. */}
+
+              {/* Start of button for canceling leaves. */}
+              {userAllowedToCancel && (
+                <Button
+                  className={cn('border-red-400 text-red-400')}
+                  variant='outline'
+                  type='button'
+                  onClick={() => handleLeaveActionsRequest('cancel')}
+                >
+                  Cancel Request
+                </Button>
+              )}
+              {/* End of button for canceling leaves. */}
             </div>
           </form>
         </Form>

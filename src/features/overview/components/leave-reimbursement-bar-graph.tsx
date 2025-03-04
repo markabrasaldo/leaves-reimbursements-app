@@ -184,14 +184,6 @@ export function LeaveReimbursementBarGraph() {
         </div>
       </CardHeader>
       <CardContent className='px-2 sm:p-6'>
-        <div className='mb-2 space-x-4'>
-          <Button variant='outline' size='sm'>
-            Start of the year to current
-          </Button>
-          <Button variant='outline' size='sm'>
-            Start of the month to current
-          </Button>
-        </div>
         <ChartContainer
           config={chartConfig}
           className='aspect-auto h-[280px] w-full'
