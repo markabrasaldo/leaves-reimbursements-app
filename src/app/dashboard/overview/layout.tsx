@@ -1,8 +1,39 @@
 import { getSessionDetails } from '@/app/utils/getSessionDetails';
 import PageContainer from '@/components/layout/page-container';
-import { dashboardCardItems, userCardItems } from '@/constants/data';
+import { userCardItems } from '@/constants/data';
 import { InfoCard } from '@/features/overview/components/info-card';
+import getConfig from 'next/config';
 import React from 'react';
+import { CardItem } from 'types';
+import { DashboardStatisticsResponse } from './types';
+
+async function getDashboardStatistics(
+  accessToken: any,
+  organization: any
+): Promise<DashboardStatisticsResponse> {
+  const { publicRuntimeConfig } = getConfig();
+  const baseUrl = publicRuntimeConfig.baseUrlLeave;
+
+  const response = await fetch(
+    `${baseUrl}/dashboard/statistics/${organization?.code}
+`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      cache: 'force-cache'
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch dashboard data');
+  }
+
+  const statistics = await response.json();
+
+  return statistics.data;
+}
 
 export default async function OverViewLayout({
   sales,
@@ -24,16 +55,39 @@ export default async function OverViewLayout({
   leaves: React.ReactNode;
   leave_balance: React.ReactNode;
 }) {
-  const { role } = await getSessionDetails();
+  const { accessToken, email, organization, role } = await getSessionDetails();
+  const statistics = await getDashboardStatistics(accessToken, organization);
 
   const isAdmin = role && role.valueOf() === 'Administrator';
+  const dashboardCardItems: CardItem[] = [
+    {
+      cardTitle: 'Pending Leaves Requests',
+      cardValue: statistics?.leaves?.submitted ?? 0,
+      cardIcon: 'clock'
+    },
+    {
+      cardTitle: 'Approved Leaves',
+      cardValue: statistics?.leaves?.approved ?? 0,
+      cardIcon: 'checkCircle'
+    },
+    {
+      cardTitle: 'Pending Reimbursements',
+      cardValue: statistics?.reimbursements?.approved ?? 0,
+      cardIcon: 'reimbursement'
+    },
+    {
+      cardTitle: 'Approved Reimbursements',
+      cardValue: statistics?.reimbursements?.approved ?? 0,
+      cardIcon: 'receipt'
+    }
+  ];
 
   return (
     <PageContainer>
       <div className='flex flex-1 flex-col space-y-2'>
         <div className='flex items-center justify-between space-y-2'>
           <h2 className='text-2xl font-bold tracking-tight'>
-            Hi, Welcome back 👋
+            Hi {email}, Welcome back 👋
           </h2>
         </div>
         <div className='grid gap-4 overflow-x-auto md:grid-cols-2 lg:grid-cols-4'>

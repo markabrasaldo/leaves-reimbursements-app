@@ -2,9 +2,11 @@ import {
   AlertTriangle,
   ArrowRight,
   Check,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
   CircuitBoardIcon,
+  Clock,
   ClockAlert,
   Command,
   CreditCard,
@@ -23,6 +25,7 @@ import {
   MoreVertical,
   Pizza,
   Plus,
+  Receipt,
   Settings,
   SunMedium,
   Trash,
@@ -43,6 +46,7 @@ import {
 export type Icon = LucideIcon;
 
 export const Icons = {
+  checkCircle: CheckCircle,
   dashboard: LayoutDashboardIcon,
   logo: Command,
   login: LogIn,
@@ -89,6 +93,7 @@ export const Icons = {
     </svg>
   ),
   twitter: Twitter,
+  clock: Clock,
   check: Check,
   trendingUp: TrendingUp,
   clockAlert: ClockAlert,
@@ -96,6 +101,7 @@ export const Icons = {
   clockArrowDown: ClockArrowDown,
   reimbursement: HandCoins,
   leaves: UserX2Icon,
+  receipt: Receipt,
   calendar: Calendar,
   download: FolderDown
 };

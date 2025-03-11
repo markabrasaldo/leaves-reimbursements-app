@@ -38,7 +38,7 @@ export interface CardItem {
   cardValue: string | number | undefined;
   cardIcon: keyof typeof Icons;
   cardSubText?: string;
-  trending: 'up' | 'down';
+  trending?: 'up' | 'down';
 }
 
 export interface TableFilter {
