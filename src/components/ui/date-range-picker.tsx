@@ -7,7 +7,11 @@ import { format } from 'date-fns';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 
-const DateRangePicker = () => {
+const DateRangePicker = ({
+  onChange
+}: {
+  onChange: (dateRange: any) => void;
+}) => {
   const [range, setRange] = useState([
     {
       startDate: new Date(),
@@ -33,12 +37,14 @@ const DateRangePicker = () => {
   useEffect(() => {
     function handleClickOutside(event) {
       if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+        onChange(range[0]);
         setIsOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [range]);
 
   return (
     <div className='relative w-80'>
