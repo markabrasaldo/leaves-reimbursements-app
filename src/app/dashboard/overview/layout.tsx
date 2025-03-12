@@ -1,5 +1,6 @@
 import { getSessionDetails } from '@/app/utils/getSessionDetails';
 import PageContainer from '@/components/layout/page-container';
+import DateRangePicker from '@/components/ui/date-range-picker';
 import { userCardItems } from '@/constants/data';
 import { InfoCard } from '@/features/overview/components/info-card';
 import getConfig from 'next/config';
@@ -63,22 +64,27 @@ export default async function OverViewLayout({
     {
       cardTitle: 'Pending Leaves Requests',
       cardValue: statistics?.leaves?.submitted ?? 0,
-      cardIcon: 'clock'
+      cardIcon: 'clock',
+      cardIconColor: '#e8c468',
+      className: 'dark:text-white bg-[#e8c468] text-[#5b5454]'
     },
     {
       cardTitle: 'Approved Leaves',
       cardValue: statistics?.leaves?.approved ?? 0,
-      cardIcon: 'checkCircle'
+      cardIcon: 'checkCircle',
+      className: 'dark:text-white bg-[#4fc680]/100 text-[#5b5454]'
     },
     {
       cardTitle: 'Pending Reimbursements',
       cardValue: statistics?.reimbursements?.approved ?? 0,
-      cardIcon: 'reimbursement'
+      cardIcon: 'reimbursement',
+      className: 'dark:text-white bg-[#e8c468] text-[#5b5454]'
     },
     {
       cardTitle: 'Approved Reimbursements',
       cardValue: statistics?.reimbursements?.approved ?? 0,
-      cardIcon: 'receipt'
+      cardIcon: 'receipt',
+      className: 'dark:text-white bg-[#4fc680]/100 text-[#5b5454]'
     }
   ];
 
@@ -90,7 +96,13 @@ export default async function OverViewLayout({
             Hi {email}, Welcome back 👋
           </h2>
         </div>
-        <div className='grid gap-4 overflow-x-auto md:grid-cols-2 lg:grid-cols-4'>
+        <div className='py-[0.25rem]'>
+          <label className='flex items-center gap-2 py-[0.25rem] text-sm text-gray-600 dark:text-white'>
+            Showing data for:
+          </label>
+          <DateRangePicker />
+        </div>
+        <div className='grid gap-4 overflow-x-auto py-[1.75rem] md:grid-cols-2 lg:grid-cols-4'>
           {isAdmin ? (
             <>
               {dashboardCardItems.map((item, key) => {
@@ -112,10 +124,10 @@ export default async function OverViewLayout({
               <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
                 {leaves_pie_stats}
               </div>
-              <div className='col-span-4'>{reimbursement_bar_stats}</div>
+              {/* <div className='col-span-4'>{reimbursement_bar_stats}</div>
               <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
                 {employees}
-              </div>
+              </div> */}
             </>
           ) : (
             <>

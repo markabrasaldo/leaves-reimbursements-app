@@ -12,16 +12,18 @@ export function InfoCard({
   cardTitle,
   cardValue,
   cardIcon,
-  cardSubText
+  cardIconColor,
+  cardSubText,
+  className
 }: CardItem) {
   const Icon = cardIcon ? Icons[cardIcon] : Icons.logo;
   const router = useRouter();
 
   return (
-    <Card key={cardTitle}>
+    <Card key={cardTitle} className={className}>
       <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
         <CardTitle className='text-sm font-medium'>{cardTitle}</CardTitle>
-        {cardIcon && <Icon />}
+        {cardIcon && <Icon className={`text-[${cardIconColor}]`} />}
       </CardHeader>
       <CardContent>
         <div className='flex items-center justify-between'>

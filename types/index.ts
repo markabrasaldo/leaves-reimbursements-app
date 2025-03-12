@@ -37,7 +37,10 @@ export interface CardItem {
   cardTitle: string;
   cardValue: string | number | undefined;
   cardIcon: keyof typeof Icons;
+  // Color of the cardIcon. Accepts hexadecimal color format
+  cardIconColor?: string;
   cardSubText?: string;
+  className?: string;
   trending?: 'up' | 'down';
 }
 
