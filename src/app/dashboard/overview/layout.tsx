@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { CardItem } from 'types';
 import { DashboardStatisticsResponse } from './types';
 import { DateRangeProvider } from '@/components/providers/date-range-picker-provider';
+import { LeavesPieGraph } from '@/features/overview/components/leaves-pie-graph';
 
 export default function OverViewLayout({
   sales,
@@ -31,6 +32,10 @@ export default function OverViewLayout({
 }) {
   const { data: session } = useSession();
   const [statistics, setStatistics] = useState<DashboardStatisticsResponse>();
+  const [selectedDateRange, setSelectedDateRange] = useState({
+    startDate: new Date(),
+    endDate: new Date()
+  });
 
   const isAdmin =
     session?.user?.role && session?.user?.role?.valueOf() === 'Administrator';
@@ -70,6 +75,7 @@ export default function OverViewLayout({
       data?.startDate,
       data?.endDate
     );
+    setSelectedDateRange(data);
   };
 
   async function getDashboardStatistics(
@@ -162,7 +168,7 @@ export default function OverViewLayout({
               <>
                 <div className='col-span-4'>{reimbursement_area_stats}</div>
                 <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
-                  {leaves_pie_stats}
+                  <LeavesPieGraph dateRange={selectedDateRange} />
                 </div>
                 {/* <div className='col-span-4'>{reimbursement_bar_stats}</div>
               <div className='col-span-4 grid auto-rows-fr md:col-span-3'>

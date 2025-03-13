@@ -11,7 +11,8 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_BASE_URL_REIMBURSEMENT || 'http://localhost:3000'
   },
   env: {
-    DASHBOARD_URL: process.env.NEXT_PUBLIC_BASE_URL_DASHBOARD
+    DASHBOARD_URL: process.env.NEXT_PUBLIC_BASE_URL_DASHBOARD,
+    LEAVES_URL: process.env.NEXT_PUBLIC_BASE_URL_LEAVE
   },
   images: {
     remotePatterns: [

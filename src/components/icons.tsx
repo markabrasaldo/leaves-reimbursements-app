@@ -1,3 +1,4 @@
+import { table } from 'console';
 import {
   AlertTriangle,
   ArrowRight,
@@ -11,6 +12,7 @@ import {
   Command,
   CreditCard,
   File,
+  FileSpreadsheetIcon,
   FileText,
   HelpCircle,
   Image,
@@ -28,6 +30,7 @@ import {
   Receipt,
   Settings,
   SunMedium,
+  Table,
   Trash,
   TrendingUp,
   Twitter,
@@ -40,14 +43,17 @@ import {
   ClockArrowDown,
   HandCoins,
   FolderDown,
-  Calendar
+  Calendar,
+  ChartPieIcon
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
 
 export const Icons = {
+  chartPie: ChartPieIcon,
   checkCircle: CheckCircle,
   dashboard: LayoutDashboardIcon,
+  fileSpreadSheet: FileSpreadsheetIcon,
   logo: Command,
   login: LogIn,
   close: X,
@@ -92,6 +98,7 @@ export const Icons = {
       ></path>
     </svg>
   ),
+  table: Table,
   twitter: Twitter,
   clock: Clock,
   check: Check,
