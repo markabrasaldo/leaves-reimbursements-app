@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Label, Pie, PieChart } from 'recharts';
 import { DataTable } from '@/components/ui/table/data-table';
 import { Leave, LeavesResponse } from '@/features/leaves/types';
@@ -159,11 +159,8 @@ export function LeavesPieGraph({ dateRange }: any) {
 
   const getLeavesCardLabel = () => {
     let label = 'My Leaves';
-    if (isAdmin) {
-      label = 'Attendance for:';
-    }
 
-    if (isAdmin && !isChartView) {
+    if (isAdmin) {
       label = 'Employees on leave for:';
     }
     return label;

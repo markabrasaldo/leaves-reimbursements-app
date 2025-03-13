@@ -9,6 +9,7 @@ import { CardItem } from 'types';
 import { DashboardStatisticsResponse } from './types';
 import { DateRangeProvider } from '@/components/providers/date-range-picker-provider';
 import { LeavesPieGraph } from '@/features/overview/components/leaves-pie-graph';
+import { ReimbursementGroupedBarGraph } from '@/features/overview/components/reimbursements-grouped-bar';
 
 export default function OverViewLayout({
   sales,
@@ -166,8 +167,10 @@ export default function OverViewLayout({
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
             {isAdmin ? (
               <>
-                <div className='col-span-4'>{reimbursement_area_stats}</div>
-                <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
+                <div className='col-span-4'>
+                  <ReimbursementGroupedBarGraph dateRange={selectedDateRange} />
+                </div>
+                <div className='col-span-4 md:col-span-3'>
                   <LeavesPieGraph dateRange={selectedDateRange} />
                 </div>
                 {/* <div className='col-span-4'>{reimbursement_bar_stats}</div>

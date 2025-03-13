@@ -12,7 +12,8 @@ const nextConfig = {
   },
   env: {
     DASHBOARD_URL: process.env.NEXT_PUBLIC_BASE_URL_DASHBOARD,
-    LEAVES_URL: process.env.NEXT_PUBLIC_BASE_URL_LEAVE
+    LEAVES_URL: process.env.NEXT_PUBLIC_BASE_URL_LEAVE,
+    REIMBURSEMENT_URL: process.env.NEXT_PUBLIC_BASE_URL_REIMBURSEMENT
   },
   images: {
     remotePatterns: [
