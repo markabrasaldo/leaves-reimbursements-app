@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Label, Pie, PieChart } from 'recharts';
 import { DataTable } from '@/components/ui/table/data-table';
 import { Leave, LeavesResponse } from '@/features/leaves/types';
-import { getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { columns } from './leaves-table/columns';
 import { format } from 'date-fns';
 import { Icons } from '@/components/icons';
@@ -28,40 +28,31 @@ import useRole from '@/hooks/use-role';
 const ChartPieIcon = Icons.chartPie;
 const LeavesTableViewIcon = Icons.table;
 const SpreadSheetIcon = Icons.fileSpreadSheet;
-const chartData = [
-  { attendance: 'sickLeave', count: 20, fill: 'var(--color-sickLeave)' },
-  {
-    attendance: 'vacationLeave',
-    count: 10,
-    fill: 'var(--color-vacationLeave)'
-  },
-  {
-    attendance: 'bereavementLeave',
-    count: 1,
-    fill: 'var(--color-bereavementLeave)'
-  },
-  { attendance: 'present', count: 40, fill: 'var(--color-present)' }
-];
 
 const chartConfig = {
-  count: {
-    label: 'Visitors'
-  },
   sickLeave: {
     label: 'Sick Leave',
-    color: 'hsl(var(--chart-1))'
+    color: '#E57373'
   },
   vacationLeave: {
     label: 'Vacation Leave',
-    color: 'hsl(var(--chart-2))'
+    color: '#64B5F6'
   },
   bereavementLeave: {
     label: 'Bereavement Leave',
-    color: 'hsl(var(--chart-3))'
+    color: '#B0B0B0'
+  },
+  birthdayLeave: {
+    label: 'Birthday Leave',
+    color: '#D291BC'
+  },
+  emergencyLeave: {
+    label: 'Emergency Leave',
+    color: '#E6A86D'
   },
   present: {
     label: 'Present',
-    color: 'hsl(var(--chart-4))'
+    color: '#81C784'
   }
 } satisfies ChartConfig;
 
@@ -69,9 +60,8 @@ export function LeavesPieGraph({ dateRange }: any) {
   const { data: session } = useSession();
   const { isAdmin } = useRole();
   const [isChartView, setIsChartView] = useState<boolean>(true);
-  const totalVisitors = useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.count, 0);
-  }, []);
+  const [chartData, setChartData] = useState([]);
+  const [totalEmployees, setTotalEmployees] = useState(0);
   const [leavesList, setLeavesList] = useState<Leave[]>([
     {
       days_applied: 0,
@@ -103,8 +93,10 @@ export function LeavesPieGraph({ dateRange }: any) {
   };
 
   async function getLeaves(): Promise<LeavesResponse> {
-    const baseUrl = 'https://leave-service.fly.dev';
-    const url = `${baseUrl}/${session?.user?.organization?.code}/leaves?page=1&sort_by=status&order=desc&status=APPROVED&limit=100&start_date=${dateRange.startDate}&end_date=${dateRange?.endDate}`;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_LEAVE;
+    const startDate = dateRange?.startDate.toISOString().split('T')[0];
+    const endDate = dateRange?.endDate.toISOString().split('T')[0];
+    const url = `${baseUrl}/${session?.user?.organization?.code}/leaves?page=1&sort_by=status&order=desc&status=APPROVED&limit=100&start_date=${startDate}&end_date=${endDate}`;
 
     const response = await fetch(url, {
       headers: {
@@ -130,7 +122,51 @@ export function LeavesPieGraph({ dateRange }: any) {
 
   const showLeavesInTable = async () => {
     const leaves = await getLeaves();
-    setLeavesList(leaves.data);
+    const leavesData = leaves.data ? leaves.data : [];
+    setLeavesList(leavesData);
+  };
+
+  useEffect(() => {
+    const getChartData = async () => {
+      const startDate = dateRange?.startDate.toISOString().split('T')[0];
+      const endDate = dateRange?.endDate.toISOString().split('T')[0];
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_LEAVE;
+      const url = `${baseUrl}/${session?.user?.organization?.code}/leaves/approved-count?start_date=${startDate}&end_date=${endDate}`;
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${session?.user?.accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      let chartData = await response.json();
+      chartData.data = chartData.data.map((leaves) => {
+        return {
+          type: leaves?.type,
+          count: leaves?.count,
+          fill: `var(--color-${leaves?.type})`
+        };
+      });
+      const totalEmployees = chartData?.data?.reduce(
+        (acc, curr) => acc + curr.count,
+        0
+      );
+      setTotalEmployees(totalEmployees);
+      setChartData(chartData.data);
+    };
+    getChartData();
+  }, [dateRange]);
+
+  const getLeavesCardLabel = () => {
+    let label = 'My Leaves';
+    if (isAdmin) {
+      label = 'Attendance for:';
+    }
+
+    if (isAdmin && !isChartView) {
+      label = 'Employees on leave for:';
+    }
+    return label;
   };
 
   return (
@@ -139,12 +175,12 @@ export function LeavesPieGraph({ dateRange }: any) {
         <CardTitle className='w-full'>
           <div className='m-auto flex w-full justify-between'>
             <div></div>
-            <div className='inline-block'>{`${isAdmin ? 'Attendance' : 'My Leaves'} for: `}</div>
+            <div className='inline-block'>{`${getLeavesCardLabel()}`}</div>
             <div className='float-right mr-[0.25rem] flex'>
-              <div onClick={() => flipCardContent()}>
+              <div onClick={() => flipCardContent()} className='text-[#5b5454]'>
                 {isChartView ? <LeavesTableViewIcon /> : <ChartPieIcon />}
               </div>
-              <div>
+              <div className='text-[#5b5454]'>
                 <SpreadSheetIcon />
               </div>
             </div>
@@ -152,11 +188,11 @@ export function LeavesPieGraph({ dateRange }: any) {
         </CardTitle>
         <CardDescription>
           {dateRange && (
-            <div>
-              <span>{format(dateRange.startDate, 'LLL-dd-yyyy')}</span>
+            <>
+              <span>{format(dateRange?.startDate, 'LLL-dd-yyyy')}</span>
               <span className='mx-[0.25rem]'>to</span>
-              <span>{format(dateRange.endDate, 'LLL-dd-yyyy')}</span>
-            </div>
+              <span>{format(dateRange?.endDate, 'LLL-dd-yyyy')}</span>
+            </>
           )}
         </CardDescription>
       </CardHeader>
@@ -174,7 +210,7 @@ export function LeavesPieGraph({ dateRange }: any) {
               <Pie
                 data={chartData}
                 dataKey='count'
-                nameKey='attendance'
+                nameKey='type'
                 innerRadius={60}
                 strokeWidth={5}
               >
@@ -193,14 +229,14 @@ export function LeavesPieGraph({ dateRange }: any) {
                             y={viewBox.cy}
                             className='fill-foreground text-3xl font-bold'
                           >
-                            {isAdmin ? totalVisitors.toLocaleString() : 12}
+                            {isAdmin ? totalEmployees : 12}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
                             y={(viewBox.cy || 0) + 24}
                             className='fill-muted-foreground'
                           >
-                            Total Leaves
+                            Total Employees
                           </tspan>
                         </text>
                       );
@@ -216,7 +252,7 @@ export function LeavesPieGraph({ dateRange }: any) {
               data-testid='leaves-table-view'
               columns={columns}
               data={leavesList}
-              totalItems={leavesList.length}
+              totalItems={leavesList?.length}
             />
           </div>
         )}
