@@ -30,3 +30,17 @@ export function toTitleCase(text: string) {
     .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space before uppercase letters
     .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
 }
+
+export async function downloadFile(
+  fileName: string,
+  fileType: string,
+  data: any
+) {
+  const blob = await data.blob();
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', `${fileName}.${fileType}`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}

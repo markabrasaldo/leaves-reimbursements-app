@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import { columns } from './leaves-table/columns';
 import { format } from 'date-fns';
 import { Icons } from '@/components/icons';
-import { toTitleCase } from '@/lib/utils';
+import { toTitleCase, downloadFile } from '@/lib/utils';
 
 import {
   Card,
@@ -167,6 +167,27 @@ export function LeavesPieGraph({ dateRange }: any) {
     return label;
   };
 
+  const exportToCSV = async () => {
+    const startDate = dateRange?.startDate.toISOString().split('T')[0];
+    const endDate = dateRange?.endDate.toISOString().split('T')[0];
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_LEAVE;
+    const exportCSVURL = `${baseUrl}/${session?.user?.organization?.code}/leaves/export?start_date=${startDate}&end_date=${endDate}`;
+    try {
+      const response = await fetch(exportCSVURL, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${session?.user?.accessToken}`,
+          'Content-Type': 'text/csv'
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to download');
+      downloadFile(`leaves_${startDate}_${endDate}`, 'csv', response);
+    } catch (error) {
+      console.error('Download error:', error);
+    }
+  };
+
   return (
     <Card className='flex flex-col'>
       <CardHeader className='items-center pb-0'>
@@ -180,7 +201,7 @@ export function LeavesPieGraph({ dateRange }: any) {
               <div onClick={() => flipCardContent()} className='cursor-pointer'>
                 {isChartView ? <LeavesTableViewIcon /> : <ChartPieIcon />}
               </div>
-              <div className='cursor-pointer'>
+              <div onClick={() => exportToCSV()} className='cursor-pointer'>
                 <SpreadSheetIcon />
               </div>
             </div>
