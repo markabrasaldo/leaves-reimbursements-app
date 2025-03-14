@@ -12,6 +12,7 @@ import {
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { format } from 'date-fns';
+import { toTitleCase } from '@/lib/utils';
 
 import {
   Card,
@@ -49,19 +50,20 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
             'Failed to fetch data for reimbursement graph'
         );
       }
-      const categories = Object.keys(reimbursementList?.data[0]).filter(
-        (key) => key !== 'month'
-      );
-      setCategories(categories);
-
-      setChartData(reimbursementList?.data);
+      if (reimbursementList?.data && reimbursementList?.data?.length > 0) {
+        const categories = Object.keys(reimbursementList?.data[0]).filter(
+          (key) => key !== 'month'
+        );
+        setCategories(categories);
+        setChartData(reimbursementList?.data);
+      }
     };
 
     getReimbursements();
   }, [dateRange]);
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className='text-center'>
         <CardTitle>Reimbursements</CardTitle>
         <CardDescription>
           {`Showing reimbursements for ${format(dateRange?.startDate, 'LLL-dd-yyyy')} to ${format(dateRange?.endDate, 'LLL-dd-yyyy')}`}
@@ -76,7 +78,7 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
             <XAxis dataKey='month' angle={-45} />
             <YAxis />
             <Tooltip />
-            <Legend />
+            <Legend formatter={(value) => toTitleCase(value)} />
             {categories.map((category, index) => (
               <Bar
                 key={category}

@@ -28,6 +28,8 @@ declare module 'next-auth' {
     leave_balances?: LeaveBalance[] | null;
     organization?: Organization;
     accessToken?: string;
+    first_name?: string;
+    last_name?: string;
   }
 
   interface Session {

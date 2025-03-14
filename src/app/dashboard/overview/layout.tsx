@@ -1,6 +1,7 @@
 'use client';
 import PageContainer from '@/components/layout/page-container';
 import DateRangePicker from '@/components/ui/date-range-picker';
+import { EventCalendar } from '@/components/calendar/event-calendar';
 import { userCardItems } from '@/constants/data';
 import { InfoCard } from '@/features/overview/components/info-card';
 import { getSession, useSession } from 'next-auth/react';
@@ -69,16 +70,6 @@ export default function OverViewLayout({
     }
   ];
 
-  const setSelectedDate = async (data: any) => {
-    await getDashboardStatistics(
-      session?.user?.accessToken,
-      session?.user?.organization?.code,
-      data?.startDate,
-      data?.endDate
-    );
-    setSelectedDateRange(data);
-  };
-
   async function getDashboardStatistics(
     accessToken: any,
     organization: any,
@@ -131,8 +122,10 @@ export default function OverViewLayout({
         session?.user?.organization?.code
       );
     };
-    getDashboardData();
-  }, [session]);
+    if (selectedDateRange) {
+      getDashboardData();
+    }
+  }, [selectedDateRange]);
 
   return (
     <DateRangeProvider>
@@ -140,14 +133,14 @@ export default function OverViewLayout({
         <div className='flex flex-1 flex-col space-y-2'>
           <div className='flex items-center justify-between space-y-2'>
             <h2 className='text-2xl font-bold tracking-tight'>
-              Hi, Welcome back 👋
+              Hi {session?.user?.first_name}!
             </h2>
           </div>
           <div className='py-[0.25rem]'>
             <label className='flex items-center gap-2 py-[0.25rem] text-sm text-gray-600 dark:text-white'>
               Showing data for:
             </label>
-            <DateRangePicker onChange={setSelectedDate} />
+            <DateRangePicker onChange={(data) => setSelectedDateRange(data)} />
           </div>
           <div className='grid gap-4 overflow-x-auto py-[1.75rem] md:grid-cols-2 lg:grid-cols-4'>
             {isAdmin ? (
@@ -173,10 +166,12 @@ export default function OverViewLayout({
                 <div className='col-span-4 md:col-span-3'>
                   <LeavesPieGraph dateRange={selectedDateRange} />
                 </div>
-                {/* <div className='col-span-4'>{reimbursement_bar_stats}</div>
-              <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
-                {employees}
-              </div> */}
+                {/* <div className='col-span-full'>
+                  <EventCalendar
+                    title={'Approved Leaves'}
+                    dateRange={selectedDateRange}
+                  />
+                </div> */}
               </>
             ) : (
               <>

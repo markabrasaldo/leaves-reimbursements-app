@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Label, Pie, PieChart } from 'recharts';
+import { Label, Legend, Pie, PieChart } from 'recharts';
 import { DataTable } from '@/components/ui/table/data-table';
 import { Leave, LeavesResponse } from '@/features/leaves/types';
 import { useSession } from 'next-auth/react';
 import { columns } from './leaves-table/columns';
 import { format } from 'date-fns';
 import { Icons } from '@/components/icons';
+import { toTitleCase } from '@/lib/utils';
 
 import {
   Card,
@@ -170,14 +171,16 @@ export function LeavesPieGraph({ dateRange }: any) {
     <Card className='flex flex-col'>
       <CardHeader className='items-center pb-0'>
         <CardTitle className='w-full'>
-          <div className='m-auto flex w-full justify-between'>
-            <div></div>
-            <div className='inline-block'>{`${getLeavesCardLabel()}`}</div>
-            <div className='float-right mr-[0.25rem] flex'>
-              <div onClick={() => flipCardContent()} className='text-[#5b5454]'>
+          <div className='m-auto flex w-full items-center'>
+            <div className='flex-1'></div>{' '}
+            <div className='flex-1 text-center font-semibold'>
+              {getLeavesCardLabel()}
+            </div>
+            <div className='flex flex-1 justify-end gap-2 text-[#5b5454]'>
+              <div onClick={() => flipCardContent()} className='cursor-pointer'>
                 {isChartView ? <LeavesTableViewIcon /> : <ChartPieIcon />}
               </div>
-              <div className='text-[#5b5454]'>
+              <div className='cursor-pointer'>
                 <SpreadSheetIcon />
               </div>
             </div>
@@ -193,58 +196,65 @@ export function LeavesPieGraph({ dateRange }: any) {
           )}
         </CardDescription>
       </CardHeader>
-      <CardContent className='mt-4 flex-1 pb-0'>
+      <CardContent className='mt-4 h-[500px] flex-1 pb-0'>
         {isChartView ? (
           <ChartContainer
             config={chartConfig}
             className='mx-auto aspect-square max-h-[360px]'
           >
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Pie
-                data={chartData}
-                dataKey='count'
-                nameKey='type'
-                innerRadius={60}
-                strokeWidth={5}
-              >
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                      return (
-                        <text
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          textAnchor='middle'
-                          dominantBaseline='middle'
-                        >
-                          <tspan
+            {chartData.length > 0 ? (
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Legend formatter={(value) => toTitleCase(value)} />
+                <Pie
+                  data={chartData}
+                  dataKey='count'
+                  nameKey='type'
+                  innerRadius={60}
+                  strokeWidth={5}
+                >
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                        return (
+                          <text
                             x={viewBox.cx}
                             y={viewBox.cy}
-                            className='fill-foreground text-3xl font-bold'
+                            textAnchor='middle'
+                            dominantBaseline='middle'
                           >
-                            {isAdmin ? totalEmployees : 12}
-                          </tspan>
-                          <tspan
-                            x={viewBox.cx}
-                            y={(viewBox.cy || 0) + 24}
-                            className='fill-muted-foreground'
-                          >
-                            Total Employees
-                          </tspan>
-                        </text>
-                      );
-                    }
-                  }}
-                />
-              </Pie>
-            </PieChart>
+                            <tspan
+                              x={viewBox.cx}
+                              y={viewBox.cy}
+                              className='fill-foreground text-3xl font-bold'
+                            >
+                              {isAdmin ? totalEmployees : 12}
+                            </tspan>
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy || 0) + 24}
+                              className='fill-muted-foreground'
+                            >
+                              Total Leaves
+                            </tspan>
+                          </text>
+                        );
+                      }
+                    }}
+                  />
+                </Pie>
+              </PieChart>
+            ) : (
+              <div className='mt-2 text-center text-lg font-medium text-gray-600'>
+                No one is on leave for the selected dates
+              </div>
+            )}
           </ChartContainer>
         ) : (
-          <div id='pietable' className='h-full'>
+          <div id='pietable' className='h-[360px]'>
             <DataTable
               data-testid='leaves-table-view'
               columns={columns}
@@ -254,11 +264,6 @@ export function LeavesPieGraph({ dateRange }: any) {
           </div>
         )}
       </CardContent>
-      {/* <CardFooter className='flex-col gap-2 text-sm'>
-        <div className='flex items-center gap-2 font-medium leading-none'>
-          {`${isAdmin ? 'Showing total attendance for the last 6 months' : `This ${'6 months'} leaves count`}`}
-        </div>
-      </CardFooter> */}
     </Card>
   );
 }
