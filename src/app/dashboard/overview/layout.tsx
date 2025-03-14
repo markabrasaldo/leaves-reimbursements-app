@@ -166,12 +166,12 @@ export default function OverViewLayout({
                 <div className='col-span-4 md:col-span-3'>
                   <LeavesPieGraph dateRange={selectedDateRange} />
                 </div>
-                {/* <div className='col-span-full'>
+                <div className='col-span-full mt-4'>
                   <EventCalendar
-                    title={'Approved Leaves'}
                     dateRange={selectedDateRange}
+                    title={'Approved Leaves'}
                   />
-                </div> */}
+                </div>
               </>
             ) : (
               <>

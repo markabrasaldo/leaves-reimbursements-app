@@ -8,7 +8,8 @@ import { useSession } from 'next-auth/react';
 import { columns } from './leaves-table/columns';
 import { format } from 'date-fns';
 import { Icons } from '@/components/icons';
-import { toTitleCase, downloadFile } from '@/lib/utils';
+import { downloadFile } from '@/lib/utils';
+import { toTitleCase } from '@/lib/utils';
 
 import {
   Card,
@@ -24,6 +25,7 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
+import { CHART_COLORS } from '@/features/overview/components/config';
 import useRole from '@/hooks/use-role';
 
 const ChartPieIcon = Icons.chartPie;
@@ -33,23 +35,23 @@ const SpreadSheetIcon = Icons.fileSpreadSheet;
 const chartConfig = {
   sickLeave: {
     label: 'Sick Leave',
-    color: '#E57373'
+    color: CHART_COLORS.COLOR_SICK_LEAVE
   },
   vacationLeave: {
     label: 'Vacation Leave',
-    color: '#64B5F6'
+    color: CHART_COLORS.COLOR_VACATION_LEAVE
   },
   bereavementLeave: {
     label: 'Bereavement Leave',
-    color: '#B0B0B0'
+    color: CHART_COLORS.COLOR_BEREAVEMENT_LEAVE
   },
   birthdayLeave: {
     label: 'Birthday Leave',
-    color: '#D291BC'
+    color: CHART_COLORS.COLOR_BIRTHDAY_LEAVE
   },
   emergencyLeave: {
     label: 'Emergency Leave',
-    color: '#E6A86D'
+    color: CHART_COLORS.COLOR_EMERGENCY_LEAVE
   },
   present: {
     label: 'Present',
@@ -189,7 +191,7 @@ export function LeavesPieGraph({ dateRange }: any) {
   };
 
   return (
-    <Card className='flex flex-col'>
+    <Card className='flex flex-col dark:bg-[#1E1E1E]/100'>
       <CardHeader className='items-center pb-0'>
         <CardTitle className='w-full'>
           <div className='m-auto flex w-full items-center'>

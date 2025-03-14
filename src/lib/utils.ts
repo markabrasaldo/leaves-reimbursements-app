@@ -27,8 +27,8 @@ export function formatBytes(
 
 export function toTitleCase(text: string) {
   return text
-    .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space before uppercase letters
-    .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 export async function downloadFile(
