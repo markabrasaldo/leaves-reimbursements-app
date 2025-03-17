@@ -24,3 +24,23 @@ export function formatBytes(
       : (sizes[i] ?? 'Bytes')
   }`;
 }
+
+export function toTitleCase(text: string) {
+  return text
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+export async function downloadFile(
+  fileName: string,
+  fileType: string,
+  data: any
+) {
+  const blob = await data.blob();
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', `${fileName}.${fileType}`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}

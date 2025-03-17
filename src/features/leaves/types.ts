@@ -9,6 +9,7 @@ export interface LeaveType {
 }
 
 export interface Leave {
+  full_name: string;
   days_applied: number;
   end_date: string;
   google_event_id: string;
