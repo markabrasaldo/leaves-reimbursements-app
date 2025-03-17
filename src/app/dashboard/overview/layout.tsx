@@ -5,6 +5,7 @@ import { EventCalendar } from '@/components/calendar/event-calendar';
 import { userCardItems } from '@/constants/data';
 import { InfoCard } from '@/features/overview/components/info-card';
 import { getSession, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { CardItem } from 'types';
 import { DashboardStatisticsResponse } from './types';
@@ -33,6 +34,7 @@ export default function OverViewLayout({
   leave_balance: React.ReactNode;
 }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [statistics, setStatistics] = useState<DashboardStatisticsResponse>();
   const [selectedDateRange, setSelectedDateRange] = useState({
     startDate: new Date(),
@@ -48,25 +50,29 @@ export default function OverViewLayout({
       cardValue: statistics?.leaves?.submitted ?? 0,
       cardIcon: 'clock',
       cardIconColor: '#e8c468',
-      className: 'dark:text-white bg-[#e8c468] text-[#5b5454]'
+      className: 'dark:text-white bg-[#e8c468] text-[#5b5454]',
+      redirectTo: { page: 'leave', status: 'SUBMITTED' }
     },
     {
       cardTitle: 'Approved Leaves',
       cardValue: statistics?.leaves?.approved ?? 0,
       cardIcon: 'checkCircle',
-      className: 'dark:text-white bg-[#4fc680]/100 text-[#5b5454]'
+      className: 'dark:text-white bg-[#4fc680]/100 text-[#5b5454]',
+      redirectTo: { page: 'leave', status: 'APPROVED' }
     },
     {
       cardTitle: 'Pending Reimbursements',
       cardValue: statistics?.reimbursements?.approved ?? 0,
       cardIcon: 'reimbursement',
-      className: 'dark:text-white bg-[#e8c468] text-[#5b5454]'
+      className: 'dark:text-white bg-[#e8c468] text-[#5b5454]',
+      redirectTo: { page: 'reimbursement', status: 'SUBMITTED' }
     },
     {
       cardTitle: 'Approved Reimbursements',
       cardValue: statistics?.reimbursements?.approved ?? 0,
       cardIcon: 'receipt',
-      className: 'dark:text-white bg-[#4fc680]/100 text-[#5b5454]'
+      className: 'dark:text-white bg-[#4fc680]/100 text-[#5b5454]',
+      redirectTo: { page: 'reimbursement', status: 'APPROVED' }
     }
   ];
 
@@ -160,10 +166,10 @@ export default function OverViewLayout({
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
             {isAdmin ? (
               <>
-                <div className='col-span-4'>
+                <div className='col-span-4 flex gap-4'>
                   <ReimbursementGroupedBarGraph dateRange={selectedDateRange} />
                 </div>
-                <div className='col-span-4 md:col-span-3'>
+                <div className='col-span-4 flex gap-4 md:col-span-3'>
                   <LeavesPieGraph dateRange={selectedDateRange} />
                 </div>
                 <div className='col-span-full mt-4'>

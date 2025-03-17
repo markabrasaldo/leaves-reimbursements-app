@@ -30,13 +30,13 @@ export const SortOrderButton = (column: Column<Leave, unknown>) => {
 
 export const columns: ColumnDef<Leave>[] = [
   {
-    accessorKey: 'user_email',
+    accessorKey: 'full_name',
     header: ({ column }) => {
       return SortOrderButton(column);
     },
     sortDescFirst: false,
     cell: ({ row }) => {
-      const user = row.original.user_email;
+      const user = row.original.full_name;
       return <span>{user}</span>;
       // return (
       //   <Link

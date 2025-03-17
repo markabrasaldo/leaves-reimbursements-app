@@ -4,7 +4,7 @@ import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
-import { CardItem } from 'types';
+import { CardItem, RedirectParams } from 'types';
 
 export function InfoCard({
   cardButton,
@@ -14,13 +14,26 @@ export function InfoCard({
   cardIcon,
   cardIconColor,
   cardSubText,
-  className
+  className,
+  redirectTo
 }: CardItem) {
   const Icon = cardIcon ? Icons[cardIcon] : Icons.logo;
   const router = useRouter();
 
+  const handleOnClick = (redirectParams: RedirectParams) => {
+    if (redirectParams) {
+      router.push(
+        `/dashboard/${redirectParams.page}?status=${redirectParams.status}`
+      );
+    }
+  };
+
   return (
-    <Card key={cardTitle} className={className}>
+    <Card
+      key={cardTitle}
+      className={className}
+      onClick={() => handleOnClick(redirectTo as RedirectParams)}
+    >
       <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
         <CardTitle className='text-sm font-medium'>{cardTitle}</CardTitle>
         {cardIcon && <Icon className={`text-[${cardIconColor}]`} />}

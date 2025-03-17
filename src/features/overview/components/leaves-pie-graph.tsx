@@ -191,7 +191,7 @@ export function LeavesPieGraph({ dateRange }: any) {
   };
 
   return (
-    <Card className='flex flex-col dark:bg-[#1E1E1E]/100'>
+    <Card className='flex flex-1 flex-col dark:bg-[#1E1E1E]/100'>
       <CardHeader className='items-center pb-0'>
         <CardTitle className='w-full'>
           <div className='m-auto flex w-full items-center'>

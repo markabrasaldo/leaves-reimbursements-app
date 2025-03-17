@@ -62,7 +62,7 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
     getReimbursements();
   }, [dateRange]);
   return (
-    <Card className='dark:bg-[#1E1E1E]/100'>
+    <Card className='flex flex-1 flex-col dark:bg-[#1E1E1E]/100'>
       <CardHeader className='text-center'>
         <CardTitle>Reimbursements</CardTitle>
         <CardDescription>

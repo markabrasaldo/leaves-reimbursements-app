@@ -42,6 +42,12 @@ export interface CardItem {
   cardSubText?: string;
   className?: string;
   trending?: 'up' | 'down';
+  redirectTo?: RedirectParams;
+}
+
+export interface RedirectParams {
+  page: string;
+  status?: string;
 }
 
 export interface TableFilter {
