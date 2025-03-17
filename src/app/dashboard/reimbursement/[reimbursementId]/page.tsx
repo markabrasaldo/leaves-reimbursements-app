@@ -1,9 +1,9 @@
-import FormCardSkeleton from '@/components/form-card-skeleton';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
 import ReimbursementViewPage from '@/features/reimbursements/components/reimbursement-view-page';
 import getConfig from 'next/config';
 import { getSessionDetails } from '@/app/utils/getSessionDetails';
+import FormCardSkeleton from '@/components/form/form-card-skeleton';
 
 export const metadata = {
   title: 'Dashboard : Reimbursement View'

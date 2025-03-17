@@ -48,14 +48,6 @@ export const navItems: NavItem[] = [
 
   //hid pages for reference
   // {
-  //   title: 'Product',
-  //   url: '/dashboard/product',
-  //   icon: 'product',
-  //   shortcut: ['p', 'p'],
-  //   isActive: false,
-  //   items: [] // No child items
-  // },
-  // {
   //   title: 'Account',
   //   url: '#', // Placeholder as there is no direct link for the parent
   //   icon: 'billing',
@@ -135,28 +127,28 @@ export const recentSalesData: SaleUser[] = [
 //Info: The following data is used for the data displayed on the top part of dashboard page.
 export const dashboardCardItems: CardItem[] = [
   {
-    cardTitle: 'Total Employee',
+    cardTitle: 'Pending Leaves Requests',
     cardValue: 60,
-    cardIcon: 'logo',
+    cardIcon: 'leaves',
     // cardSubText: `${'5%'} Last Month`,
     trending: 'up'
   },
   {
-    cardTitle: 'New Employee',
+    cardTitle: 'Approved Leaves',
     cardValue: 2,
-    cardIcon: 'userPlus',
-    // cardSubText: `${'1%'} Last Month`,
-    trending: 'up'
-  },
-  {
-    cardTitle: 'On Leave',
-    cardValue: 5,
     cardIcon: 'leaves',
     // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
   {
-    cardTitle: 'Total Reimbursements',
+    cardTitle: 'Pending Reimbursements',
+    cardValue: 5,
+    cardIcon: 'clockAlert',
+    // cardSubText: `${'1%'} Last Month`,
+    trending: 'up'
+  },
+  {
+    cardTitle: 'Approved Reimbursements',
     cardValue: 5,
     cardIcon: 'clockAlert',
     // cardSubText: `${'6%'} Last Month`,
@@ -168,7 +160,7 @@ export const userCardItems: CardItem[] = [
   {
     cardTitle: 'Pending Requests',
     cardValue: 2,
-    cardIcon: 'userPlus',
+    cardIcon: 'leaves',
     // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   },
@@ -180,10 +172,17 @@ export const userCardItems: CardItem[] = [
     trending: 'up'
   },
   {
-    cardTitle: 'Reimbursements',
+    cardTitle: 'Pending Reimbursements',
     cardValue: 250,
     cardIcon: 'clockAlert',
     // cardSubText: `${'6%'} Last Month`,
+    trending: 'up'
+  },
+  {
+    cardTitle: 'Approved Reimbursements',
+    cardValue: 5,
+    cardIcon: 'clockAlert',
+    // cardSubText: `${'1%'} Last Month`,
     trending: 'up'
   }
 ];

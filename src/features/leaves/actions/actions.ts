@@ -34,7 +34,7 @@ export async function submitForm(_prevState: any, formData: FormData) {
     leave_type_id: leavesFormData.leaveType,
     start_date: leavesFormData.startDate,
     end_date: leavesFormData.endDate,
-    remarks: leavesFormData.remarks
+    descriptions: leavesFormData.descriptions
   };
 
   const response = await fetch(
@@ -59,7 +59,7 @@ export async function submitForm(_prevState: any, formData: FormData) {
     };
   }
 
-  revalidatePath('/dashboard/leave/:id');
+  revalidatePath('/dashboard/leave/:leaveId');
 
   return {
     status: 'success',
@@ -68,8 +68,7 @@ export async function submitForm(_prevState: any, formData: FormData) {
 }
 
 export async function leaveAction(_prevState: any, formData: FormData) {
-  const { accessToken, organization, leave_balances } =
-    await getSessionDetails();
+  const { accessToken, organization } = await getSessionDetails();
 
   const leaveActionFormData = Object.fromEntries(formData);
 
@@ -80,7 +79,8 @@ export async function leaveAction(_prevState: any, formData: FormData) {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
-      }
+      },
+      body: JSON.stringify({ remarks: leaveActionFormData?.remarks })
     }
   );
 

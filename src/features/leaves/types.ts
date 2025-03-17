@@ -4,11 +4,12 @@ export interface LeaveType {
   id: string;
   name: string;
   color: string;
-  description: string;
+  descriptions: string;
   icon: string;
 }
 
 export interface Leave {
+  full_name: string;
   days_applied: number;
   end_date: string;
   google_event_id: string;
@@ -20,6 +21,7 @@ export interface Leave {
   user_email: string;
   user_id: string;
   remarks: string;
+  descriptions: string;
 }
 
 export interface LeavesResponse {

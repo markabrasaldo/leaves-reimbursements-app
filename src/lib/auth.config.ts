@@ -46,12 +46,11 @@ const authConfig = {
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'
             },
-            cache: 'force-cache',
+            cache: 'no-cache',
             body: JSON.stringify(payload)
           });
 
           const responseData = await response.json();
-
           if (!response.ok) {
             throw new Error(responseData.message || 'Something went wrong');
           }
@@ -100,6 +99,8 @@ const authConfig = {
         token.code = user.code;
         token.organization = user.organization;
         token.leave_balances = user.leave_balances;
+        token.first_name = user.first_name;
+        token.last_name = user.last_name;
       }
       return token;
     },
@@ -110,6 +111,8 @@ const authConfig = {
           ...session.user,
           code: token.code as string,
           email: token.email,
+          first_name: token.first_name as string,
+          last_name: token.last_name as string,
           leave_balances: token.leave_balances as LeaveBalanceType[],
           organization: token.organization as Organization,
           role: token.role as Roles,

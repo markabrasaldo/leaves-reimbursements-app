@@ -5,8 +5,15 @@ const nextConfig = {
     baseUrlIam: process.env.NEXT_PUBLIC_BASE_URL_IAM || 'http://localhost:3000',
     baseUrlLeave:
       process.env.NEXT_PUBLIC_BASE_URL_LEAVE || 'http://localhost:3000',
+    baseUrlDashboard:
+      process.env.NEXT_PUBLIC_BASE_URL_DASHBOARD || 'http://localhost:3000',
     baseUrlReimbursement:
       process.env.NEXT_PUBLIC_BASE_URL_REIMBURSEMENT || 'http://localhost:3000'
+  },
+  env: {
+    DASHBOARD_URL: process.env.NEXT_PUBLIC_BASE_URL_DASHBOARD,
+    LEAVES_URL: process.env.NEXT_PUBLIC_BASE_URL_LEAVE,
+    REIMBURSEMENT_URL: process.env.NEXT_PUBLIC_BASE_URL_REIMBURSEMENT
   },
   images: {
     remotePatterns: [
