@@ -173,7 +173,7 @@ export function LeavesPieGraph({ dateRange }: any) {
     const startDate = dateRange?.startDate.toISOString().split('T')[0];
     const endDate = dateRange?.endDate.toISOString().split('T')[0];
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_LEAVE;
-    const exportCSVURL = `${baseUrl}/${session?.user?.organization?.code}/leaves/export?start_date=${startDate}&end_date=${endDate}`;
+    const exportCSVURL = `${baseUrl}/${session?.user?.organization?.code}/leaves/export?start_date=${startDate}&end_date=${endDate}&status=APPROVED`;
     try {
       const response = await fetch(exportCSVURL, {
         method: 'GET',
