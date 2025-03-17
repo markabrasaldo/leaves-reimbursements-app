@@ -40,7 +40,7 @@ export function EventCalendar({
     borderColor: keyof typeof eventColors;
   }
 
-  const eventColors = {
+  const eventColors: { [key: string]: string } = {
     birthdayLeave: CHART_COLORS.COLOR_BIRTHDAY_LEAVE,
     bereavementLeave: CHART_COLORS.COLOR_BEREAVEMENT_LEAVE,
     emergencyLeave: CHART_COLORS.COLOR_EMERGENCY_LEAVE,

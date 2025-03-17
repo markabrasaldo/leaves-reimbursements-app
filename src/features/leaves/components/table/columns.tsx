@@ -7,8 +7,6 @@ import { ArrowUpDown } from 'lucide-react';
 import Link from 'next/link';
 import { formatDate } from '@/app/utils/formatDate';
 import { useTableFilters } from '@/hooks/use-table-filters';
-import { useCallback, useEffect, useState } from 'react';
-import { useDebounce } from '@/hooks/use-debounce';
 
 export const getStatusColor = (status: string): string => {
   const colorMap: Record<string, string> = {

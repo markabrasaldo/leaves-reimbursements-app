@@ -21,7 +21,7 @@ const DateRangePicker = ({
   ]);
 
   const [isOpen, setIsOpen] = useState(false);
-  const pickerRef = useRef(null);
+  const pickerRef = useRef<HTMLInputElement>(null);
 
   const presetRanges = {
     Today: [new Date(), new Date()],
@@ -35,8 +35,11 @@ const DateRangePicker = ({
   };
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+    function handleClickOutside(event: Event) {
+      if (
+        pickerRef.current &&
+        !pickerRef.current?.contains(event.target as Node)
+      ) {
         onChange(range[0]);
         setIsOpen(false);
       }
@@ -63,7 +66,7 @@ const DateRangePicker = ({
         >
           <DateRange
             ranges={range}
-            onChange={(item) => setRange([item.selection])}
+            onChange={(item: any) => setRange([item.selection])}
             moveRangeOnFirstSelection={false}
             rangeColors={['#2563eb']}
           />

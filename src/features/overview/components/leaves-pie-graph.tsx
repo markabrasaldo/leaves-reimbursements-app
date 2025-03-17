@@ -67,6 +67,7 @@ export function LeavesPieGraph({ dateRange }: any) {
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [leavesList, setLeavesList] = useState<Leave[]>([
     {
+      full_name: '',
       days_applied: 0,
       end_date: '',
       google_event_id: '',
@@ -143,7 +144,7 @@ export function LeavesPieGraph({ dateRange }: any) {
       });
 
       let chartData = await response.json();
-      chartData.data = chartData.data.map((leaves) => {
+      chartData.data = chartData.data.map((leaves: any) => {
         return {
           type: leaves?.type,
           count: leaves?.count,
@@ -151,7 +152,7 @@ export function LeavesPieGraph({ dateRange }: any) {
         };
       });
       const totalEmployees = chartData?.data?.reduce(
-        (acc, curr) => acc + curr.count,
+        (acc: any, curr: any) => acc + curr.count,
         0
       );
       setTotalEmployees(totalEmployees);

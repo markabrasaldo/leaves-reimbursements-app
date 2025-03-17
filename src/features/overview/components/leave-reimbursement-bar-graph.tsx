@@ -16,7 +16,6 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
-import { Button } from '@/components/ui/button';
 
 export const description = 'An interactive bar chart';
 
