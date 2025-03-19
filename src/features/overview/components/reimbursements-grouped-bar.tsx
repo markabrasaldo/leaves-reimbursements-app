@@ -1,33 +1,46 @@
 'use client';
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { format } from 'date-fns';
 import { toTitleCase } from '@/lib/utils';
-
+import { Icons } from '@/components/icons';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
 import { ChartContainer } from '@/components/ui/chart';
+import { downloadFile } from '@/lib/utils';
+
+const SpreadSheetIcon = Icons.fileSpreadSheet;
 
 export function ReimbursementGroupedBarGraph({ dateRange }: any) {
   const { data: session } = useSession();
   const [chartData, setChartData] = useState([]);
   const [categories, setCategories] = useState<string[]>([]);
+
+  const exportToCSV = async () => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_REIMBURSEMENT;
+    const exportCSVURL = `${baseUrl}/${session?.user?.organization?.code}/reimbursement/export-to-csv`;
+    try {
+      const response = await fetch(exportCSVURL, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${session?.user?.accessToken}`,
+          'Content-Type': 'text/csv'
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to download');
+      downloadFile(`reimbursement`, 'csv', response);
+    } catch (error) {
+      console.error('Download error:', error);
+    }
+  };
 
   useEffect(() => {
     const getReimbursements = async () => {
@@ -64,7 +77,23 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
   return (
     <Card className='flex flex-1 flex-col dark:bg-[#1E1E1E]/100'>
       <CardHeader className='text-center'>
-        <CardTitle>Reimbursements</CardTitle>
+        <CardTitle className='w-full'>
+          <div className='m-auto flex w-full items-center'>
+            <div className='flex-1'></div>
+            <div className='flex-1 text-center font-semibold'>
+              Reimbursements
+            </div>
+            <div className='flex flex-1 justify-end gap-2 text-[#5b5454]'>
+              <div
+                onClick={() => exportToCSV()}
+                className='cursor-pointer'
+                title='Export to CSV'
+              >
+                <SpreadSheetIcon />
+              </div>
+            </div>
+          </div>
+        </CardTitle>
         <CardDescription>
           {`Showing reimbursements for ${format(dateRange?.startDate, 'LLL-dd-yyyy')} to ${format(dateRange?.endDate, 'LLL-dd-yyyy')}`}
         </CardDescription>

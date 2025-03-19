@@ -67,9 +67,9 @@ export function LeavesPieGraph({ dateRange }: any) {
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [leavesList, setLeavesList] = useState<Leave[]>([
     {
-      full_name: '',
       days_applied: 0,
       end_date: '',
+      full_name: '',
       google_event_id: '',
       id: '',
       leave_type: {
@@ -201,10 +201,18 @@ export function LeavesPieGraph({ dateRange }: any) {
               {getLeavesCardLabel()}
             </div>
             <div className='flex flex-1 justify-end gap-2 text-[#5b5454]'>
-              <div onClick={() => flipCardContent()} className='cursor-pointer'>
+              <div
+                onClick={() => flipCardContent()}
+                className='cursor-pointer'
+                title={`${isChartView ? 'Table View' : 'Chart View'}`}
+              >
                 {isChartView ? <LeavesTableViewIcon /> : <ChartPieIcon />}
               </div>
-              <div onClick={() => exportToCSV()} className='cursor-pointer'>
+              <div
+                onClick={() => exportToCSV()}
+                className='cursor-pointer'
+                title='Export to CSV'
+              >
                 <SpreadSheetIcon />
               </div>
             </div>
