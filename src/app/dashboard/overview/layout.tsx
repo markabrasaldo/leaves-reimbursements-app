@@ -34,15 +34,11 @@ export default function OverViewLayout({
   leave_balance: React.ReactNode;
 }) {
   const { data: session } = useSession();
-  const router = useRouter();
   const [statistics, setStatistics] = useState<DashboardStatisticsResponse>();
   const [selectedDateRange, setSelectedDateRange] = useState({
     startDate: new Date(),
     endDate: new Date()
   });
-
-  const isAdmin =
-    session?.user?.role && session?.user?.role?.valueOf() === 'Administrator';
 
   const dashboardCardItems: CardItem[] = [
     {
@@ -148,19 +144,9 @@ export default function OverViewLayout({
             <DateRangePicker onChange={(data) => setSelectedDateRange(data)} />
           </div>
           <div className='grid gap-4 overflow-x-auto py-[1.75rem] md:grid-cols-2 lg:grid-cols-4'>
-            {isAdmin ? (
-              <>
-                {dashboardCardItems.map((item, key) => {
-                  return <InfoCard {...item} key={key} />;
-                })}
-              </>
-            ) : (
-              <>
-                {userCardItems.map((item, key) => {
-                  return <InfoCard {...item} key={key} />;
-                })}
-              </>
-            )}
+            {dashboardCardItems.map((item, key) => {
+              return <InfoCard {...item} key={key} />;
+            })}
           </div>
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
             <div className='col-span-4 flex gap-4'>
