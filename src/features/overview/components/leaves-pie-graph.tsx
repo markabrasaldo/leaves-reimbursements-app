@@ -156,13 +156,32 @@ export function LeavesPieGraph({ dateRange }: any) {
         0
       );
       setTotalEmployees(totalEmployees);
-      setChartData(chartData.data);
+
+      const transformLeaveTypeValue = (str: string) => {
+        return str
+          .replace(/^\w/, (c: any) => c.toLowerCase())
+          .replace(/\s+(\w)/g, (_: any, c: any) => c.toUpperCase());
+      };
+
+      const userChartData = session?.user?.leave_balances?.map(
+        (leaves: any) => {
+          return {
+            type: transformLeaveTypeValue(leaves?.leave_type_name),
+            count: leaves?.balance,
+            fill: `var(--color-${transformLeaveTypeValue(
+              leaves?.leave_type_name
+            )})`
+          };
+        }
+      );
+
+      setChartData(isAdmin ? chartData.data : userChartData);
     };
     getChartData();
   }, [dateRange]);
 
   const getLeavesCardLabel = () => {
-    let label = 'My Leaves';
+    let label = 'My Leave Balance';
 
     if (isAdmin) {
       label = 'Employees on leave for:';
@@ -190,6 +209,11 @@ export function LeavesPieGraph({ dateRange }: any) {
       console.error('Download error:', error);
     }
   };
+
+  const totalLeaves = session?.user?.leave_balances?.reduce(
+    (acc: any, curr: any) => acc + curr.balance,
+    0
+  );
 
   return (
     <Card className='flex flex-1 flex-col dark:bg-[#1E1E1E]/100'>
@@ -263,7 +287,7 @@ export function LeavesPieGraph({ dateRange }: any) {
                               y={viewBox.cy}
                               className='fill-foreground text-3xl font-bold'
                             >
-                              {isAdmin ? totalEmployees : 12}
+                              {isAdmin ? totalEmployees : totalLeaves}
                             </tspan>
                             <tspan
                               x={viewBox.cx}

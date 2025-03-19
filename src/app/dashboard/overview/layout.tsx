@@ -93,8 +93,7 @@ export default function OverViewLayout({
 
     const dateRangeFilter = `?start_date=${startDate}&end_date=${endDate}`;
     const response = await fetch(
-      `${baseUrl}/dashboard/statistics/${organization}${dateRangeFilter}
-`,
+      `${baseUrl}/dashboard/statistics/${organization}${dateRangeFilter}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -164,30 +163,18 @@ export default function OverViewLayout({
             )}
           </div>
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
-            {isAdmin ? (
-              <>
-                <div className='col-span-4 flex gap-4'>
-                  <ReimbursementGroupedBarGraph dateRange={selectedDateRange} />
-                </div>
-                <div className='col-span-4 flex gap-4 md:col-span-3'>
-                  <LeavesPieGraph dateRange={selectedDateRange} />
-                </div>
-                <div className='col-span-full mt-4'>
-                  <EventCalendar
-                    dateRange={selectedDateRange}
-                    title={'Approved Leaves'}
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div className='col-span-4'>{reimbursement_area_stats}</div>
-                <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
-                  {leaves_pie_stats}
-                </div>
-                <div className='col-span-4'>{leave_balance}</div>
-              </>
-            )}
+            <div className='col-span-4 flex gap-4'>
+              <ReimbursementGroupedBarGraph dateRange={selectedDateRange} />
+            </div>
+            <div className='col-span-4 flex gap-4 md:col-span-3'>
+              <LeavesPieGraph dateRange={selectedDateRange} />
+            </div>
+            <div className='col-span-full mt-4'>
+              <EventCalendar
+                dateRange={selectedDateRange}
+                title={'Approved Leaves'}
+              />
+            </div>
           </div>
         </div>
       </PageContainer>

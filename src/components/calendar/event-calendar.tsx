@@ -10,6 +10,7 @@ import { toCamelCase } from 'js-convert-case';
 import { CHART_COLORS } from '@/features/overview/components/config';
 
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
 
 interface Event {
   id: string;
@@ -29,6 +30,8 @@ export function EventCalendar({
   const [windowWidth, setWindowWidth] = useState<number>(
     typeof window !== 'undefined' ? window.innerWidth : 1200
   );
+  const router = useRouter();
+
   const { data: session } = useSession();
 
   interface Event {
@@ -117,6 +120,9 @@ export function EventCalendar({
             aspectRatio={windowWidth < 768 ? 0.8 : 1.5}
             contentHeight='auto'
             dayMaxEventRows={2}
+            dateClick={(args) =>
+              router.push(`/dashboard/leave/new?start_date=${args.dateStr}`)
+            }
             height='auto'
           />
         </CardContent>
