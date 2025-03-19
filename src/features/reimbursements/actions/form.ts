@@ -15,7 +15,7 @@ export async function submitForm(
 
   const reimbursementFormData = Object.fromEntries(formData);
 
-  const attachments = formData.getAll('attachments');
+  const attachments = formData.getAll('files');
 
   const validatedReimbursementFormData = schema.safeParse(
     reimbursementFormData
@@ -65,26 +65,23 @@ export async function submitForm(
       };
     }
 
+    const uploadFormData = new FormData();
+
+    attachments.forEach((file) => {
+      uploadFormData.append('files', file);
+    });
+
     const uploadPayload = {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${accessToken}`
       },
-      body: JSON.stringify({ attachments })
+      body: uploadFormData
     };
 
     const uploadImageResponse = await fetch(
       `${baseUrl}/${organization?.code}/reimbursement/${result.data.id}/upload`,
       uploadPayload
-      // {
-      //   method: 'POST',
-      //   headers: {
-      //     Authorization: `Bearer ${accessToken}`,
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({ files: attachments })
-      // }
     );
 
     const uploadImageResult = await uploadImageResponse.json();
