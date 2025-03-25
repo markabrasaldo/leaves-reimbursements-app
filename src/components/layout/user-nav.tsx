@@ -11,8 +11,15 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { signOutAction } from '@/lib/auth-action';
 import { signOut, useSession } from 'next-auth/react';
+import { useActionState } from 'react';
 export function UserNav() {
+  const [_formState, formAction, isPending] = useActionState(
+    signOutAction,
+    undefined
+  );
+
   const { data: session } = useSession();
   if (session) {
     return (
@@ -58,10 +65,19 @@ export function UserNav() {
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut()}>
-            Log out
-            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          <form action={formAction}>
+            <DropdownMenuItem>
+              <Button
+                type='submit'
+                className='w-full'
+                variant={'ghost'}
+                disabled={isPending}
+              >
+                Log out
+                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+              </Button>
+            </DropdownMenuItem>
+          </form>
         </DropdownMenuContent>
       </DropdownMenu>
     );

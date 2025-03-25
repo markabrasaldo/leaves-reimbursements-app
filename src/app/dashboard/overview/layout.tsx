@@ -58,7 +58,7 @@ export default function OverViewLayout({
     },
     {
       cardTitle: 'Pending Reimbursements',
-      cardValue: statistics?.reimbursements?.approved ?? 0,
+      cardValue: statistics?.reimbursements?.submitted ?? 0,
       cardIcon: 'reimbursement',
       className: 'dark:text-white bg-[#e8c468] text-[#5b5454]',
       redirectTo: { page: 'reimbursement', status: 'SUBMITTED' }
@@ -84,8 +84,8 @@ export default function OverViewLayout({
       endDate = new Date();
     }
 
-    startDate = startDate.toISOString().split('T')[0];
-    endDate = endDate.toISOString().split('T')[0];
+    startDate = startDate.toLocaleDateString('en-CA');
+    endDate = endDate.toLocaleDateString('en-CA');
 
     const dateRangeFilter = `?start_date=${startDate}&end_date=${endDate}`;
     const response = await fetch(
@@ -105,6 +105,7 @@ export default function OverViewLayout({
     }
 
     const statistics = await response.json();
+
     setStatistics(statistics.data);
     return statistics.data;
   }
@@ -120,7 +121,9 @@ export default function OverViewLayout({
     const getDashboardData = async () => {
       await getDashboardStatistics(
         session?.user?.accessToken,
-        session?.user?.organization?.code
+        session?.user?.organization?.code,
+        selectedDateRange.startDate,
+        selectedDateRange.endDate
       );
     };
     if (selectedDateRange) {

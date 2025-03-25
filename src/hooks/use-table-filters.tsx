@@ -22,6 +22,11 @@ export function useTableFilters() {
     searchParams.status.withOptions({ shallow: false }).withDefault('')
   );
 
+  const [reimbursementFilter, setReimbursementFilter] = useQueryState(
+    'reimbursement_type',
+    searchParams.status.withOptions({ shallow: false }).withDefault('')
+  );
+
   const [orderFilter, setOrderFilter] = useQueryState(
     'order',
     searchParams.status.withOptions({ shallow: false }).withDefault('')
@@ -35,13 +40,17 @@ export function useTableFilters() {
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
     setStatusFilter(null);
+    setLeaveFilter(null);
+    setReimbursementFilter(null);
 
     setPage(1);
   }, [setSearchQuery, setStatusFilter, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!searchQuery || !!statusFilter;
-  }, [searchQuery, statusFilter]);
+    return (
+      !!searchQuery || !!statusFilter || !!leaveFilter || !!reimbursementFilter
+    );
+  }, [searchQuery, statusFilter, leaveFilter, reimbursementFilter]);
 
   return {
     searchQuery,
@@ -54,6 +63,8 @@ export function useTableFilters() {
     setStatusFilter,
     leaveFilter,
     setLeaveFilter,
+    reimbursementFilter,
+    setReimbursementFilter,
     orderFilter,
     setOrderFilter
   };

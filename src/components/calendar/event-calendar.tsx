@@ -65,8 +65,8 @@ export function EventCalendar({
   useEffect(() => {
     const fetchEvents = async () => {
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_LEAVE;
-      const startDate = dateRange?.startDate.toISOString().split('T')[0];
-      const endDate = dateRange?.endDate.toISOString().split('T')[0];
+      const startDate = dateRange?.startDate?.toLocaleDateString('en-CA');
+      const endDate = dateRange?.endDate?.toLocaleDateString('en-CA');
       const calendarUrl = `${baseUrl}/${session?.user?.organization?.code}/calendar-events?start_date=${startDate}&end_date=${endDate}`;
       try {
         const response = await fetch(calendarUrl, {

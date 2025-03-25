@@ -31,6 +31,7 @@ export interface Reimbursement {
   attachments: Attachment[];
   description?: string;
   reimbursement_type_code: string;
+  remarks?: string;
 }
 
 export interface ReimbursementsResponse {
