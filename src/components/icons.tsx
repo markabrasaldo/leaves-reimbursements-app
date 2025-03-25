@@ -2,6 +2,7 @@ import { table } from 'console';
 import {
   AlertTriangle,
   ArrowRight,
+  ChartColumnBig,
   Check,
   CheckCircle,
   ChevronLeft,
@@ -50,6 +51,7 @@ import {
 export type Icon = LucideIcon;
 
 export const Icons = {
+  barChart: ChartColumnBig,
   chartPie: ChartPieIcon,
   checkCircle: CheckCircle,
   dashboard: LayoutDashboardIcon,

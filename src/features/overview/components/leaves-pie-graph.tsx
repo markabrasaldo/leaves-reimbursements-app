@@ -246,7 +246,11 @@ export function LeavesPieGraph({ dateRange }: any) {
                 className='cursor-pointer'
                 title={`${isChartView ? 'Table View' : 'Chart View'}`}
               >
-                {isChartView ? <LeavesTableViewIcon /> : <ChartPieIcon />}
+                {isChartView ? (
+                  <>{isAdmin && <LeavesTableViewIcon />}</>
+                ) : (
+                  <ChartPieIcon />
+                )}
               </div>
               <div
                 onClick={() => exportToCSV()}

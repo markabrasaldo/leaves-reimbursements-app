@@ -12,6 +12,8 @@ import { Suspense } from 'react';
 import ReimbursementListPage from '@/features/reimbursements/components/reimbursement-table-list';
 import TableAction from '@/components/table/table-action';
 import UploadCSV from '@/features/leaves/components/upload-csv';
+import { getSessionDetails } from '@/app/utils/getSessionDetails';
+import { Roles } from 'next-auth';
 
 export const metadata = {
   title: 'Dashboard: Reimbursement'
@@ -25,6 +27,8 @@ export default async function Page(props: pageProps) {
   const searchParams = await props.searchParams;
   // Allow nested RSCs to access the search params (in a type-safe way)
   searchParamsCache.parse(searchParams);
+  const { role } = await getSessionDetails();
+  const isAdmin = role === ('Administrator' as unknown as Roles);
 
   // This key is used for invoke suspense if any of the search params changed (used for filters).
   const key = serialize({ ...searchParams });
@@ -49,7 +53,7 @@ export default async function Page(props: pageProps) {
         <div className='flex items-start justify-between'>
           <Heading title='Reimbursements' description='Manage reimbursements' />
           <div className='flex items-center gap-2'>
-            <UploadCSV />
+            {isAdmin && <UploadCSV />}
             <Link
               href='/dashboard/reimbursement/new'
               className={cn(buttonVariants(), 'text-xs md:text-sm')}
