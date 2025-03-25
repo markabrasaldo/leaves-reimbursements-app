@@ -327,6 +327,7 @@ export function LeaveForm({
               {/* Start of buttons for approval scenario. */}
               {initialData?.status === 'SUBMITTED' &&
                 !isRejecting &&
+                data?.user?.user_id !== initialData?.user_id &&
                 isAdmin && (
                   <>
                     <Button

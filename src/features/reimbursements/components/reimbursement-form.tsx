@@ -56,7 +56,6 @@ export default function ReimbursementForm({
 }) {
   const { data } = useSession();
 
-  const [buttonStatus, setButtonStatus] = useState('');
   const [isRejecting, setRejectStatus] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -337,6 +336,19 @@ export default function ReimbursementForm({
                   </>
                 )}
 
+              {initialData?.status === 'APPROVED' && isAdmin && (
+                <>
+                  <Button
+                    type='button'
+                    onClick={() =>
+                      handleReimbursementActionsRequest('reimburse')
+                    }
+                  >
+                    Reimburse
+                  </Button>
+                </>
+              )}
+
               {isRejecting && isAdmin && (
                 <>
                   <Button
@@ -357,11 +369,7 @@ export default function ReimbursementForm({
                 </>
               )}
               {!onProcessReimbursement && (
-                <Button
-                  onClick={() => setButtonStatus('Draft')}
-                  type='submit'
-                  disabled={isPending}
-                >
+                <Button type='submit' disabled={isPending}>
                   {isPending
                     ? 'Please wait ...'
                     : initialData
