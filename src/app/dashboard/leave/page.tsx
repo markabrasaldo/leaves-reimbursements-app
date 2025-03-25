@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import TableAction from '@/components/table/table-action';
 import { Heading } from '@/components/ui/heading';
+import UploadCSV from '@/features/leaves/components/upload-csv';
 
 export const metadata = {
   title: 'Dashboard: Leave'
@@ -48,12 +49,15 @@ export default async function Page(props: pageProps) {
       <div className='flex flex-1 flex-col space-y-4'>
         <div className='flex items-start justify-between'>
           <Heading title='Leaves' description='Manage leaves' />
-          <Link
-            href='/dashboard/leave/new'
-            className={cn(buttonVariants(), 'text-xs md:text-sm')}
-          >
-            <Plus className='mr-2 h-4 w-4' /> Add New
-          </Link>
+          <div className='flex items-center gap-2'>
+            <UploadCSV />
+            <Link
+              href='/dashboard/leave/new'
+              className={cn(buttonVariants(), 'text-xs md:text-sm')}
+            >
+              <Plus className='mr-2 h-4 w-4' /> Add New
+            </Link>
+          </div>
         </div>
         <Separator />
         <TableAction

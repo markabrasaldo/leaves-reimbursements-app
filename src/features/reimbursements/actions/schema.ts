@@ -28,7 +28,8 @@ export const schema = z.object({
     .number({ required_error: 'Amount is required' })
     .gte(1, { message: 'Amount is Required' }), // alias .min(5)
   status: z.string().optional(),
-  dateRequested: z.string().optional()
+  dateRequested: z.string().optional(),
+  remarks: z.string().optional()
 });
 
 export type FormState = z.infer<typeof schema>;

@@ -24,8 +24,11 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
   const [categories, setCategories] = useState<string[]>([]);
 
   const exportToCSV = async () => {
+    const startDate = dateRange?.startDate?.toLocaleDateString('en-CA');
+    const endDate = dateRange?.endDate?.toLocaleDateString('en-CA');
+
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_REIMBURSEMENT;
-    const exportCSVURL = `${baseUrl}/${session?.user?.organization?.code}/reimbursement/export-to-csv`;
+    const exportCSVURL = `${baseUrl}/${session?.user?.organization?.code}/reimbursement/export-to-csv?start_date=${startDate}&end_date=${endDate}&status=APPROVED`;
     try {
       const response = await fetch(exportCSVURL, {
         method: 'GET',
@@ -45,9 +48,13 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
   useEffect(() => {
     const getReimbursements = async () => {
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_REIMBURSEMENT;
-      const startDate = dateRange?.startDate.toISOString().split('T')[0];
-      const endDate = dateRange?.endDate.toISOString().split('T')[0];
-      const url = `${baseUrl}/${session?.user?.organization?.code}/reimbursements/summary?start_date${startDate}&end_date=${endDate}`;
+
+      const startDate = new Date(dateRange?.startDate)?.toLocaleDateString(
+        'en-CA'
+      );
+      const endDate = new Date(dateRange?.endDate)?.toLocaleDateString('en-CA');
+
+      const url = `${baseUrl}/${session?.user?.organization?.code}/reimbursements/summary?start_date=${startDate}&end_date=${endDate}`;
 
       const response = await fetch(url, {
         headers: {

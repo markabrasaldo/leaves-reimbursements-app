@@ -1,6 +1,12 @@
 'use client';
 
-import { startTransition, useActionState, useEffect, useRef } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import { FileUploader } from '@/components/form/file-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,12 +35,15 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Attachment, Reimbursement } from '../types';
 import React from 'react';
-import { submitForm } from '../actions/form';
+import { reimbursementAction, submitForm } from '../actions/form';
 import { schema } from '../actions/schema';
 import { toast } from 'sonner';
-import { redirect } from 'next/navigation';
+import { redirect, useParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { toastUtil } from '@/app/utils/toastUtil';
+import { Textarea } from '@/components/ui/textarea';
+import { useSession } from 'next-auth/react';
+import { Roles } from 'next-auth';
 
 export default function ReimbursementForm({
   reimbursementTypesData,
@@ -45,6 +54,14 @@ export default function ReimbursementForm({
   initialData: Reimbursement | null;
   pageTitle: string;
 }) {
+  const { data } = useSession();
+
+  const [buttonStatus, setButtonStatus] = useState('');
+  const [isRejecting, setRejectStatus] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const isAdmin = data?.user?.role === ('Administrator' as unknown as Roles);
+
   const newFiles = initialData?.attachments?.map((image: Attachment) => {
     const blob = new Blob([JSON.stringify(image, null, 2)], {
       type: image.file_type
@@ -67,7 +84,8 @@ export default function ReimbursementForm({
     description: initialData?.description || '',
     status: initialData?.status || '',
     dateRequested: initialData ? format(initialData?.date!, 'yyyy-MM-dd') : '',
-    attachments: newFiles
+    attachments: newFiles,
+    remarks: initialData?.remarks || ''
   };
 
   const form = useForm<z.infer<typeof schema>>({
@@ -79,20 +97,23 @@ export default function ReimbursementForm({
     submitForm,
     defaultValues
   );
+  const [reimbursementState, reimbursemenAction, isReimbursementRequesting] =
+    useActionState(reimbursementAction, {
+      status: '',
+      message: ''
+    });
 
   useEffect(() => {
     if (state?.status) {
       toastUtil(state);
-      // if (state?.status === 'success') redirect('/dashboard/leave');
+      if (state?.status === 'success') redirect('/dashboard/reimbursement');
     }
-    // if (leaveRequestState?.status) {
-    // toastUtil(leaveRequestState);
-    // if (leaveRequestState?.status === 'success') redirect('/dashboard/leave');
-    // }
-  }, [
-    state
-    // leaveRequestState
-  ]);
+    if (reimbursementState?.status) {
+      toastUtil(reimbursementState);
+      if (reimbursementState?.status === 'success')
+        redirect('/dashboard/reimbursement');
+    }
+  }, [state, reimbursementState]);
 
   const { reimbursementTypes, initializeReimbursementTypes } =
     useReimbursementStore();
@@ -101,10 +122,15 @@ export default function ReimbursementForm({
     initializeReimbursementTypes(reimbursementTypesData);
   }, [reimbursementTypesData, initializeReimbursementTypes]);
 
-  const onProcessReimbursement =
-    ['APPROVED', 'REJECTED', 'REIMBURSED'].includes(
-      initialData?.status as string
-    ) || initialData?.status === 'SUBMITTED';
+  const onProcessReimbursement = [
+    'DRAFT',
+    'APPROVED',
+    'REJECTED',
+    'REIMBURSED',
+    'SUBMITTED'
+  ].includes(initialData?.status as string);
+
+  const fieldsDisabled = !isEditing && onProcessReimbursement;
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -112,6 +138,11 @@ export default function ReimbursementForm({
 
     const formData = new FormData(event.currentTarget);
     const attachments = form.getValues('attachments');
+
+    if (isEditing) {
+      formData.append('status', initialData?.status as string);
+      formData.append('reimbursementId', initialData?.id as string);
+    }
 
     if (attachments && attachments.length) {
       for (let i = 0; i < attachments.length; i++) {
@@ -123,6 +154,19 @@ export default function ReimbursementForm({
       formAction(formData);
     });
   };
+
+  const handleReimbursementActionsRequest = async (action: string) => {
+    const formData = new FormData();
+    formData.append('action', action);
+    formData.append('reimbursementId', initialData?.id as string);
+    formData.append('remarks', remarksInputValue as string);
+
+    startTransition(() => {
+      reimbursemenAction(formData);
+    });
+  };
+
+  const remarksInputValue = form.watch('remarks');
 
   return (
     <Card className='mx-auto w-full'>
@@ -153,7 +197,7 @@ export default function ReimbursementForm({
                           // progresses={progresses}
                           // pass the onUpload function here for direct upload
                           // onUpload={uploadFiles}
-                          // disabled={isUploading}
+                          disabled={fieldsDisabled}
                         />
                       </FormControl>
                       <FormMessage />
@@ -171,6 +215,7 @@ export default function ReimbursementForm({
                     <FormItem>
                       <FormLabel>Reimbursement Type</FormLabel>
                       <Select
+                        disabled={fieldsDisabled}
                         onValueChange={(value) => field.onChange(value)}
                         value={field.value}
                         {...form.register('reimbursementType', {
@@ -205,6 +250,7 @@ export default function ReimbursementForm({
                     <FormLabel>Amount</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={fieldsDisabled}
                         type='number'
                         min={0}
                         placeholder='Enter amount'
@@ -215,12 +261,13 @@ export default function ReimbursementForm({
                   </FormItem>
                 )}
               />
+
               {initialData?.status && (
                 <>
                   <FormField
                     control={form.control}
                     name='dateRequested'
-                    disabled={true}
+                    disabled={fieldsDisabled}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Date Requested</FormLabel>
@@ -231,6 +278,7 @@ export default function ReimbursementForm({
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
                     name='status'
@@ -238,7 +286,7 @@ export default function ReimbursementForm({
                       <FormItem>
                         <FormLabel>Status</FormLabel>
                         <FormControl>
-                          <Input disabled={true} {...field} />
+                          <Input disabled={fieldsDisabled} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -246,22 +294,116 @@ export default function ReimbursementForm({
                   />
                 </>
               )}
+
+              {(isRejecting || initialData?.status === 'REJECTED') && (
+                <div className='col-span-full'>
+                  <FormField
+                    control={form.control}
+                    name='remarks'
+                    disabled={!isRejecting}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Remarks (Min. 6 characters)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
             </div>
+
             <div className='space-x-2'>
-              {initialData?.status === 'SUBMITTED' && (
+              {initialData?.status === 'SUBMITTED' &&
+                !isRejecting &&
+                isAdmin && (
+                  <>
+                    <Button
+                      type='button'
+                      onClick={() =>
+                        handleReimbursementActionsRequest('approve')
+                      }
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      type='button'
+                      onClick={() => setRejectStatus((prev) => !prev)}
+                    >
+                      Reject
+                    </Button>
+                  </>
+                )}
+
+              {isRejecting && isAdmin && (
                 <>
-                  <Button type='submit'>Approve</Button>
-                  <Button type='submit'>Reject</Button>
+                  <Button
+                    type='button'
+                    disabled={
+                      !remarksInputValue || remarksInputValue.length < 6
+                    }
+                    onClick={() => handleReimbursementActionsRequest('reject')}
+                  >
+                    Proceed to Reject
+                  </Button>
+                  <Button
+                    type='button'
+                    onClick={() => setRejectStatus((prev) => !prev)}
+                  >
+                    Cancel
+                  </Button>
                 </>
               )}
               {!onProcessReimbursement && (
-                <Button type='submit' disabled={isPending}>
+                <Button
+                  onClick={() => setButtonStatus('Draft')}
+                  type='submit'
+                  disabled={isPending}
+                >
                   {isPending
                     ? 'Please wait ...'
                     : initialData
                       ? 'Submit'
                       : 'Save as draft'}
                 </Button>
+              )}
+
+              {initialData?.status === 'DRAFT' && !isEditing && (
+                <>
+                  <Button
+                    type='button'
+                    onClick={() => handleReimbursementActionsRequest('submit')}
+                    disabled={isPending}
+                  >
+                    {isPending
+                      ? 'Please wait ...'
+                      : initialData
+                        ? 'Submit'
+                        : 'Save as draft'}
+                  </Button>
+                  <Button
+                    type='button'
+                    onClick={() => setIsEditing((prev) => !prev)}
+                  >
+                    Edit
+                  </Button>
+                </>
+              )}
+
+              {isEditing && (
+                <>
+                  <Button type='submit' disabled={isPending}>
+                    {isPending ? 'Please wait ...' : 'Save as draft'}
+                  </Button>
+                  <Button
+                    type='button'
+                    onClick={() => setIsEditing((prev) => !prev)}
+                  >
+                    Cancel
+                  </Button>
+                </>
               )}
             </div>
           </form>
