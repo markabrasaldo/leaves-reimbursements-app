@@ -29,17 +29,17 @@ export const SortOrderButton = (column: Column<Leave, unknown>) => {
 };
 
 export const columns: ColumnDef<Leave>[] = [
-  {
-    accessorKey: 'created_by',
-    header: ({ column }) => {
-      return SortOrderButton(column);
-    },
-    sortDescFirst: false,
-    cell: ({ row }) => {
-      const user = row.original.created_by;
-      return <span>{user}</span>;
-    }
-  },
+  // {
+  //   accessorKey: 'created_by',
+  //   header: ({ column }) => {
+  //     return SortOrderButton(column);
+  //   },
+  //   sortDescFirst: false,
+  //   cell: ({ row }) => {
+  //     const user = row.original.created_by;
+  //     return <span>{user}</span>;
+  //   }
+  // },
   {
     accessorKey: 'leave_type.name',
     header: 'Leave Type',
