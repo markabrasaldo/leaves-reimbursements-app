@@ -163,6 +163,21 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
 
     getReimbursements();
   }, [dateRange]);
+
+  const checkIfTotalIsZero = (data: Array<Record<string, number>>): boolean => {
+    if (data.length > 0) {
+      const item = data[0];
+
+      const total = Object.values(item).reduce((sum, value) => {
+        return typeof value === 'number' ? sum + value : sum;
+      }, 0);
+
+      return total !== 0;
+    }
+
+    return false;
+  };
+
   return (
     <Card className='flex flex-1 flex-col dark:bg-[#1E1E1E]/100'>
       <CardHeader className='text-center'>
@@ -199,36 +214,51 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {isChartView ? (
-          <ChartContainer config={{}} className='aspect-auto h-[310px] w-full'>
-            <BarChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-            >
-              <XAxis dataKey='month' angle={-45} />
-              <YAxis />
-              <Tooltip />
-              <Legend formatter={(value) => toTitleCase(value)} />
-              {categories.map((category, index) => (
-                <Bar
-                  key={category}
-                  dataKey={category}
-                  fill={
-                    ['#FFB74D', '#4DB6AC ', '#10b981', '#e11d48'][index % 4]
-                  }
-                  name={category}
+        {checkIfTotalIsZero(chartData) ? (
+          <>
+            {isChartView ? (
+              <ChartContainer
+                config={{}}
+                className='aspect-auto h-[310px] w-full'
+              >
+                <BarChart
+                  data={chartData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                >
+                  <XAxis dataKey='month' angle={-45} />
+                  <YAxis />
+                  <Tooltip
+                    formatter={(value, name) => {
+                      return [value, toTitleCase(name as string)];
+                    }}
+                  />
+                  <Legend formatter={(value) => toTitleCase(value)} />
+                  {categories.map((category, index) => (
+                    <Bar
+                      key={category}
+                      dataKey={category}
+                      fill={
+                        ['#FFB74D', '#4DB6AC ', '#10b981', '#e11d48'][index % 4]
+                      }
+                      name={category}
+                    />
+                  ))}
+                </BarChart>
+              </ChartContainer>
+            ) : (
+              <div id='reimbursements-table' className='h-[360px]'>
+                <DataTable
+                  data-testid='leaves-table-view'
+                  columns={columns}
+                  data={reimbursementList}
+                  totalItems={reimbursementList?.length}
                 />
-              ))}
-            </BarChart>
-          </ChartContainer>
+              </div>
+            )}
+          </>
         ) : (
-          <div id='reimbursements-table' className='h-[360px]'>
-            <DataTable
-              data-testid='leaves-table-view'
-              columns={columns}
-              data={reimbursementList}
-              totalItems={reimbursementList?.length}
-            />
+          <div className='mt-2 text-center text-lg font-medium text-gray-600'>
+            No reimbursements for selected date range
           </div>
         )}
       </CardContent>
