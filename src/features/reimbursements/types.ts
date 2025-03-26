@@ -36,5 +36,11 @@ export interface Reimbursement {
 
 export interface ReimbursementsResponse {
   data: Reimbursement[];
+  meta?: {
+    limit: string;
+    page: string;
+    totalCount: number;
+    totalPage: number;
+  };
   message: string;
 }

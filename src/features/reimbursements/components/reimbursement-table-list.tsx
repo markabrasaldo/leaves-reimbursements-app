@@ -40,10 +40,11 @@ async function getReimbursements(
     throw new Error(reimbursementList.error || 'Failed to fetch reimbursement');
   }
 
-  const { data, message } = reimbursementList;
+  const { data, meta, message } = reimbursementList;
 
   return {
     data,
+    meta,
     message
   };
 }
@@ -54,24 +55,28 @@ export default async function ReimbursementListPage() {
   const q = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
   const reimbursement_type = searchParamsCache.get('reimbursement_type');
-
+  const order = searchParamsCache.get('order');
   const status = searchParamsCache.get('status');
+  const sort = searchParamsCache.get('sort');
 
   const filters = {
     ...(page && { page }),
     ...(pageLimit && { limit: pageLimit }),
     ...(q && { q }),
     ...(status && { status: status }),
-    ...(reimbursement_type && { reimbursement_type })
+    ...(reimbursement_type && { reimbursement_type }),
+    ...(order && { order: order?.toUpperCase() }),
+    ...(sort && { sort })
   };
 
-  const { data } = await getReimbursements(filters);
+  const { data, meta } = await getReimbursements(filters);
 
   const totalReimbursements = (data && data.length) ?? 0;
   const reimbursements: Reimbursement[] = data ?? [];
 
   return (
     <ReimbursementTable
+      pageCount={meta?.totalPage ?? 1}
       data-testid='reimbursement-table'
       columns={columns}
       data={reimbursements}

@@ -1,18 +1,42 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
+import { Column, ColumnDef } from '@tanstack/react-table';
 import { Reimbursement } from '../../types';
 import { format } from 'date-fns';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { getStatusColor } from '@/features/leaves/components/table/columns';
+import { useTableFilters } from '@/hooks/use-table-filters';
+import { ArrowUpDown } from 'lucide-react';
+
+export const SortOrderButton = (column: Column<Reimbursement, unknown>) => {
+  const { setOrderFilter, setSortFilter } = useTableFilters();
+
+  const sort = (e: React.MouseEvent<HTMLElement>) => {
+    const sortFn = column.getToggleSortingHandler();
+    const currOrder = column.getNextSortingOrder();
+
+    if (sortFn) sortFn(e);
+
+    setOrderFilter(currOrder as string);
+    setSortFilter('amount');
+  };
+
+  return (
+    <Button variant='ghost' onClick={(e) => sort(e)}>
+      Reimbursement Type
+      <ArrowUpDown className='ml-2 h-4 w-4' />
+    </Button>
+  );
+};
 
 export const columns: ColumnDef<Reimbursement>[] = [
   {
     accessorKey: 'reimbursementType',
-    header: 'Reimbursement Type',
+    header: ({ column }) => {
+      return SortOrderButton(column);
+    },
     cell: ({ row }) => {
       return (
         <Link
