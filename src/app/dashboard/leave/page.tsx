@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import TableAction from '@/components/table/table-action';
 import { Heading } from '@/components/ui/heading';
-import UploadCSV from '@/features/leaves/components/upload-csv';
+// import UploadCSV from '@/features/leaves/components/upload-csv';
 import { Roles } from 'next-auth';
 import { getSessionDetails } from '@/app/utils/getSessionDetails';
 
@@ -54,7 +54,7 @@ export default async function Page(props: pageProps) {
         <div className='flex items-start justify-between'>
           <Heading title='Leaves' description='Manage leaves' />
           <div className='flex items-center gap-2'>
-            {isAdmin && <UploadCSV />}
+            {/* {isAdmin && <UploadCSV />} */}
             <Link
               href='/dashboard/leave/new'
               className={cn(buttonVariants(), 'text-xs md:text-sm')}
