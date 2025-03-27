@@ -11,6 +11,7 @@ export const searchParams = {
   q: parseAsString,
   status: parseAsString,
   leave_type: parseAsString,
+  reimbursement_type: parseAsString,
   order: parseAsString
 };
 

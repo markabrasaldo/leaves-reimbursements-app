@@ -36,14 +36,6 @@ export const navItems: NavItem[] = [
     shortcut: ['r', 'r'],
     isActive: false,
     items: [] // No child items
-  },
-  {
-    title: 'Calendar',
-    url: '/dashboard/calendar',
-    icon: 'calendar',
-    shortcut: ['r', 'r'],
-    isActive: false,
-    items: [] // No child items
   }
 
   //hid pages for reference

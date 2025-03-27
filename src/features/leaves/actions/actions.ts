@@ -98,3 +98,12 @@ export async function leaveAction(_prevState: any, formData: FormData) {
     message: result.message
   };
 }
+
+export async function uploadCSVAction(_prevState: any, formData: FormData) {
+  const uploadCSVActionFormData = Object.fromEntries(formData);
+
+  return {
+    status: 'success',
+    message: 'message'
+  };
+}

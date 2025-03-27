@@ -1,6 +1,6 @@
 'use client';
 
-import { CrossIcon, UploadIcon } from 'lucide-react';
+import { X, UploadIcon } from 'lucide-react';
 import Image from 'next/image';
 import * as React from 'react';
 import Dropzone, {
@@ -312,7 +312,7 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
           className='size-7'
           onClick={onRemove}
         >
-          <CrossIcon className='size-4' aria-hidden='true' />
+          <X className='size-4' aria-hidden='true' />
           <span className='sr-only'>Remove file</span>
         </Button>
       </div>

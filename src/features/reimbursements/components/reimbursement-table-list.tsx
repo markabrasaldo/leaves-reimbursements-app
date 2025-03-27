@@ -51,15 +51,18 @@ async function getReimbursements(
 export default async function ReimbursementListPage() {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
+  const q = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
+  const reimbursement_type = searchParamsCache.get('reimbursement_type');
+
   const status = searchParamsCache.get('status');
 
   const filters = {
     ...(page && { page }),
     ...(pageLimit && { limit: pageLimit }),
-    ...(search && { search }),
-    ...(status && { status: status })
+    ...(q && { q }),
+    ...(status && { status: status }),
+    ...(reimbursement_type && { reimbursement_type })
   };
 
   const { data } = await getReimbursements(filters);

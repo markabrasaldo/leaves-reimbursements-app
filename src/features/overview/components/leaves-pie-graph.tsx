@@ -64,12 +64,13 @@ export function LeavesPieGraph({ dateRange }: any) {
   const { isAdmin } = useRole();
   const [isChartView, setIsChartView] = useState<boolean>(true);
   const [chartData, setChartData] = useState([]);
+  const [totalLeaves, setTotalLeaves] = useState(0);
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [leavesList, setLeavesList] = useState<Leave[]>([
     {
-      full_name: '',
       days_applied: 0,
       end_date: '',
+      full_name: '',
       google_event_id: '',
       id: '',
       leave_type: {
@@ -98,8 +99,9 @@ export function LeavesPieGraph({ dateRange }: any) {
 
   async function getLeaves(): Promise<LeavesResponse> {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_LEAVE;
-    const startDate = dateRange?.startDate.toISOString().split('T')[0];
-    const endDate = dateRange?.endDate.toISOString().split('T')[0];
+    const startDate = dateRange?.startDate?.toLocaleDateString('en-CA');
+    const endDate = dateRange?.endDate?.toLocaleDateString('en-CA');
+
     const url = `${baseUrl}/${session?.user?.organization?.code}/leaves?page=1&sort_by=status&order=desc&status=APPROVED&limit=100&start_date=${startDate}&end_date=${endDate}`;
 
     const response = await fetch(url, {
@@ -132,8 +134,8 @@ export function LeavesPieGraph({ dateRange }: any) {
 
   useEffect(() => {
     const getChartData = async () => {
-      const startDate = dateRange?.startDate.toISOString().split('T')[0];
-      const endDate = dateRange?.endDate.toISOString().split('T')[0];
+      const startDate = dateRange?.startDate?.toLocaleDateString('en-CA');
+      const endDate = dateRange?.endDate?.toLocaleDateString('en-CA');
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_LEAVE;
       const url = `${baseUrl}/${session?.user?.organization?.code}/leaves/approved-count?start_date=${startDate}&end_date=${endDate}`;
       const response = await fetch(url, {
@@ -144,6 +146,7 @@ export function LeavesPieGraph({ dateRange }: any) {
       });
 
       let chartData = await response.json();
+
       chartData.data = chartData.data.map((leaves: any) => {
         return {
           type: leaves?.type,
@@ -151,19 +154,56 @@ export function LeavesPieGraph({ dateRange }: any) {
           fill: `var(--color-${leaves?.type})`
         };
       });
-      const totalEmployees = chartData?.data?.reduce(
-        (acc: any, curr: any) => acc + curr.count,
-        0
+
+      const leaveBalance = await fetch(
+        `${baseUrl}/${session?.user?.organization?.code}/users/${session?.user?.user_id}/leave-balances`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
-      setTotalEmployees(totalEmployees);
-      setChartData(chartData.data);
+
+      const userLeaves = await leaveBalance.json();
+
+      const userTotalLeaves = isAdmin
+        ? chartData?.data?.reduce((acc: any, curr: any) => acc + curr.count, 0)
+        : userLeaves?.leave_balances?.reduce(
+            (acc: any, curr: any) => acc + curr.balance,
+            0
+          );
+
+      setTotalEmployees(userTotalLeaves);
+
+      const transformLeaveTypeValue = (str: string) => {
+        return str
+          .replace(/^\w/, (c: any) => c.toLowerCase())
+          .replace(/\s+(\w)/g, (_: any, c: any) => c.toUpperCase());
+      };
+
+      const userChartData = session?.user?.leave_balances?.map(
+        (leaves: any) => {
+          return {
+            type: transformLeaveTypeValue(leaves?.leave_type_name),
+            count: leaves?.balance,
+            fill: `var(--color-${transformLeaveTypeValue(
+              leaves?.leave_type_name
+            )})`
+          };
+        }
+      );
+
+      setChartData(isAdmin ? chartData.data : userChartData);
     };
+
     getChartData();
   }, [dateRange]);
 
-  const getLeavesCardLabel = () => {
-    let label = 'My Leaves';
+  const formattedDate = new Date().toLocaleDateString('en-CA');
 
+  const getLeavesCardLabel = () => {
+    let label = `My leave balance as of `;
     if (isAdmin) {
       label = 'Employees on leave for:';
     }
@@ -171,8 +211,8 @@ export function LeavesPieGraph({ dateRange }: any) {
   };
 
   const exportToCSV = async () => {
-    const startDate = dateRange?.startDate.toISOString().split('T')[0];
-    const endDate = dateRange?.endDate.toISOString().split('T')[0];
+    const startDate = dateRange?.startDate?.toLocaleDateString('en-CA');
+    const endDate = dateRange?.endDate?.toLocaleDateString('en-CA');
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_LEAVE;
     const exportCSVURL = `${baseUrl}/${session?.user?.organization?.code}/leaves/export?start_date=${startDate}&end_date=${endDate}&status=APPROVED`;
     try {
@@ -201,23 +241,29 @@ export function LeavesPieGraph({ dateRange }: any) {
               {getLeavesCardLabel()}
             </div>
             <div className='flex flex-1 justify-end gap-2 text-[#5b5454]'>
-              <div onClick={() => flipCardContent()} className='cursor-pointer'>
-                {isChartView ? <LeavesTableViewIcon /> : <ChartPieIcon />}
+              <div
+                onClick={() => flipCardContent()}
+                className='cursor-pointer'
+                title={`${isChartView ? 'Table View' : 'Chart View'}`}
+              >
+                {isChartView ? (
+                  <>{isAdmin && <LeavesTableViewIcon />}</>
+                ) : (
+                  <ChartPieIcon />
+                )}
               </div>
-              <div onClick={() => exportToCSV()} className='cursor-pointer'>
+              <div
+                onClick={() => exportToCSV()}
+                className='cursor-pointer'
+                title='Export to CSV'
+              >
                 <SpreadSheetIcon />
               </div>
             </div>
           </div>
         </CardTitle>
         <CardDescription>
-          {dateRange && (
-            <>
-              <span>{format(dateRange?.startDate, 'LLL-dd-yyyy')}</span>
-              <span className='mx-[0.25rem]'>to</span>
-              <span>{format(dateRange?.endDate, 'LLL-dd-yyyy')}</span>
-            </>
-          )}
+          {format(formattedDate, 'LLLL, dd yyyy')}
         </CardDescription>
       </CardHeader>
       <CardContent className='mt-4 h-[500px] flex-1 pb-0'>
@@ -255,7 +301,7 @@ export function LeavesPieGraph({ dateRange }: any) {
                               y={viewBox.cy}
                               className='fill-foreground text-3xl font-bold'
                             >
-                              {isAdmin ? totalEmployees : 12}
+                              {totalEmployees}
                             </tspan>
                             <tspan
                               x={viewBox.cx}

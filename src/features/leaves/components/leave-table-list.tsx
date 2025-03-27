@@ -18,6 +18,7 @@ async function getLeaves(filters: TableFilter): Promise<LeavesResponse> {
       ? `${baseUrl}/${organization?.code}/users/${user_id}/leaves`
       : `${baseUrl}/${organization?.code}/leaves`
   );
+
   const params = new URLSearchParams(url.search);
 
   if (filters) {
@@ -54,7 +55,7 @@ async function getLeaves(filters: TableFilter): Promise<LeavesResponse> {
 export default async function LeavesListPage() {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
+  const q = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
   const status = searchParamsCache.get('status');
   const leave_type = searchParamsCache.get('leave_type');
@@ -63,7 +64,7 @@ export default async function LeavesListPage() {
   const filters = {
     ...(page && { page }),
     ...(pageLimit && { limit: pageLimit }),
-    ...(search && { search }),
+    ...(q && { q }),
     ...(status && { status }),
     ...(leave_type && { leave_type }),
     ...(order && { order })

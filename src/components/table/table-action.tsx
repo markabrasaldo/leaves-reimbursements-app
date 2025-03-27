@@ -12,16 +12,20 @@ interface FilterOption {
 
 export default function TableAction({
   filterStatusOption,
-  filterLeaveOption
+  filterLeaveOption,
+  filterReimbursementOption
 }: {
   filterStatusOption?: FilterOption[];
   filterLeaveOption?: FilterOption[];
+  filterReimbursementOption?: FilterOption[];
 }) {
   const {
     statusFilter,
     setStatusFilter,
     leaveFilter,
     setLeaveFilter,
+    reimbursementFilter,
+    setReimbursementFilter,
     isAnyFilterActive,
     resetFilters,
     searchQuery,
@@ -45,6 +49,17 @@ export default function TableAction({
           filterValue={statusFilter}
         />
       )}
+
+      {filterReimbursementOption && (
+        <DataTableFilterBox
+          filterKey='reimbursement'
+          title='Reimbursement'
+          options={filterReimbursementOption}
+          setFilterValue={setReimbursementFilter}
+          filterValue={reimbursementFilter}
+        />
+      )}
+
       {filterLeaveOption && (
         <DataTableFilterBox
           filterKey='leave'

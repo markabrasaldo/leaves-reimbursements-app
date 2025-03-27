@@ -34,15 +34,11 @@ export default function OverViewLayout({
   leave_balance: React.ReactNode;
 }) {
   const { data: session } = useSession();
-  const router = useRouter();
   const [statistics, setStatistics] = useState<DashboardStatisticsResponse>();
   const [selectedDateRange, setSelectedDateRange] = useState({
     startDate: new Date(),
     endDate: new Date()
   });
-
-  const isAdmin =
-    session?.user?.role && session?.user?.role?.valueOf() === 'Administrator';
 
   const dashboardCardItems: CardItem[] = [
     {
@@ -62,7 +58,7 @@ export default function OverViewLayout({
     },
     {
       cardTitle: 'Pending Reimbursements',
-      cardValue: statistics?.reimbursements?.approved ?? 0,
+      cardValue: statistics?.reimbursements?.submitted ?? 0,
       cardIcon: 'reimbursement',
       className: 'dark:text-white bg-[#e8c468] text-[#5b5454]',
       redirectTo: { page: 'reimbursement', status: 'SUBMITTED' }
@@ -88,13 +84,12 @@ export default function OverViewLayout({
       endDate = new Date();
     }
 
-    startDate = startDate.toISOString().split('T')[0];
-    endDate = endDate.toISOString().split('T')[0];
+    startDate = startDate.toLocaleDateString('en-CA');
+    endDate = endDate.toLocaleDateString('en-CA');
 
     const dateRangeFilter = `?start_date=${startDate}&end_date=${endDate}`;
     const response = await fetch(
-      `${baseUrl}/dashboard/statistics/${organization}${dateRangeFilter}
-`,
+      `${baseUrl}/dashboard/statistics/${organization}${dateRangeFilter}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -110,6 +105,7 @@ export default function OverViewLayout({
     }
 
     const statistics = await response.json();
+
     setStatistics(statistics.data);
     return statistics.data;
   }
@@ -125,7 +121,9 @@ export default function OverViewLayout({
     const getDashboardData = async () => {
       await getDashboardStatistics(
         session?.user?.accessToken,
-        session?.user?.organization?.code
+        session?.user?.organization?.code,
+        selectedDateRange.startDate,
+        selectedDateRange.endDate
       );
     };
     if (selectedDateRange) {
@@ -149,45 +147,23 @@ export default function OverViewLayout({
             <DateRangePicker onChange={(data) => setSelectedDateRange(data)} />
           </div>
           <div className='grid gap-4 overflow-x-auto py-[1.75rem] md:grid-cols-2 lg:grid-cols-4'>
-            {isAdmin ? (
-              <>
-                {dashboardCardItems.map((item, key) => {
-                  return <InfoCard {...item} key={key} />;
-                })}
-              </>
-            ) : (
-              <>
-                {userCardItems.map((item, key) => {
-                  return <InfoCard {...item} key={key} />;
-                })}
-              </>
-            )}
+            {dashboardCardItems.map((item, key) => {
+              return <InfoCard {...item} key={key} />;
+            })}
           </div>
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
-            {isAdmin ? (
-              <>
-                <div className='col-span-4 flex gap-4'>
-                  <ReimbursementGroupedBarGraph dateRange={selectedDateRange} />
-                </div>
-                <div className='col-span-4 flex gap-4 md:col-span-3'>
-                  <LeavesPieGraph dateRange={selectedDateRange} />
-                </div>
-                <div className='col-span-full mt-4'>
-                  <EventCalendar
-                    dateRange={selectedDateRange}
-                    title={'Approved Leaves'}
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div className='col-span-4'>{reimbursement_area_stats}</div>
-                <div className='col-span-4 grid auto-rows-fr md:col-span-3'>
-                  {leaves_pie_stats}
-                </div>
-                <div className='col-span-4'>{leave_balance}</div>
-              </>
-            )}
+            <div className='col-span-4 flex gap-4'>
+              <ReimbursementGroupedBarGraph dateRange={selectedDateRange} />
+            </div>
+            <div className='col-span-4 flex gap-4 md:col-span-3'>
+              <LeavesPieGraph dateRange={selectedDateRange} />
+            </div>
+            <div className='col-span-full mt-4'>
+              <EventCalendar
+                dateRange={selectedDateRange}
+                title={'Approved Leaves'}
+              />
+            </div>
           </div>
         </div>
       </PageContainer>

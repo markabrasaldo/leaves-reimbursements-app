@@ -10,6 +10,7 @@ import { toCamelCase } from 'js-convert-case';
 import { CHART_COLORS } from '@/features/overview/components/config';
 
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
 
 interface Event {
   id: string;
@@ -29,6 +30,8 @@ export function EventCalendar({
   const [windowWidth, setWindowWidth] = useState<number>(
     typeof window !== 'undefined' ? window.innerWidth : 1200
   );
+  const router = useRouter();
+
   const { data: session } = useSession();
 
   interface Event {
@@ -62,8 +65,8 @@ export function EventCalendar({
   useEffect(() => {
     const fetchEvents = async () => {
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL_LEAVE;
-      const startDate = dateRange?.startDate.toISOString().split('T')[0];
-      const endDate = dateRange?.endDate.toISOString().split('T')[0];
+      const startDate = dateRange?.startDate?.toLocaleDateString('en-CA');
+      const endDate = dateRange?.endDate?.toLocaleDateString('en-CA');
       const calendarUrl = `${baseUrl}/${session?.user?.organization?.code}/calendar-events?start_date=${startDate}&end_date=${endDate}`;
       try {
         const response = await fetch(calendarUrl, {
@@ -117,6 +120,9 @@ export function EventCalendar({
             aspectRatio={windowWidth < 768 ? 0.8 : 1.5}
             contentHeight='auto'
             dayMaxEventRows={2}
+            dateClick={(args) =>
+              router.push(`/dashboard/leave/new?start_date=${args.dateStr}`)
+            }
             height='auto'
           />
         </CardContent>

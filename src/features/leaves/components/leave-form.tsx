@@ -33,7 +33,7 @@ import {
 import { schema } from '../actions/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { redirect } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Roles } from 'next-auth';
 import { cn } from '@/lib/utils';
@@ -51,6 +51,9 @@ export function LeaveForm({
   const [isMobile, setIsMobile] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isRejecting, setRejectStatus] = useState(false);
+
+  const searchParams = useSearchParams();
+  const calendarStartDate = searchParams.get('start_date');
 
   const [state, formAction, isPending] = useActionState(submitForm, {
     status: '',
@@ -73,7 +76,10 @@ export function LeaveForm({
 
   const defaultValues = {
     startDate:
-      initialData?.start_date || (state?.formData?.startDate as string) || '',
+      initialData?.start_date ||
+      (state?.formData?.startDate as string) ||
+      calendarStartDate ||
+      '',
     endDate:
       initialData?.end_date || (state?.formData?.endDate as string) || '',
     leaveType:
@@ -116,7 +122,11 @@ export function LeaveForm({
   useEffect(() => {
     if (state?.status) {
       toastUtil(state);
-      if (state?.status === 'success') redirect('/dashboard/leave');
+      if (state?.status === 'success') {
+        redirect(
+          calendarStartDate ? '/dashboard/overview' : '/dashboard/leave'
+        );
+      }
     }
     if (leaveRequestState?.status) {
       toastUtil(leaveRequestState);
@@ -317,6 +327,7 @@ export function LeaveForm({
               {/* Start of buttons for approval scenario. */}
               {initialData?.status === 'SUBMITTED' &&
                 !isRejecting &&
+                data?.user?.user_id !== initialData?.user_id &&
                 isAdmin && (
                   <>
                     <Button
