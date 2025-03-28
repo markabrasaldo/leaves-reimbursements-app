@@ -32,6 +32,11 @@ export function useTableFilters() {
     searchParams.status.withOptions({ shallow: false }).withDefault('')
   );
 
+  const [sortFilter, setSortFilter] = useQueryState(
+    'sort',
+    searchParams.status.withOptions({ shallow: false }).withDefault('')
+  );
+
   const [page, setPage] = useQueryState(
     'page',
     searchParams.page.withDefault(1)
@@ -66,6 +71,8 @@ export function useTableFilters() {
     reimbursementFilter,
     setReimbursementFilter,
     orderFilter,
-    setOrderFilter
+    setOrderFilter,
+    sortFilter,
+    setSortFilter
   };
 }

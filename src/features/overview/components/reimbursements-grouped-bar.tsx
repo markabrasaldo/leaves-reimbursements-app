@@ -23,6 +23,7 @@ import {
 import { ChartContainer } from '@/components/ui/chart';
 import { downloadFile } from '@/lib/utils';
 import useRole from '@/hooks/use-role';
+import { useSearchParams } from 'next/navigation';
 
 const BarCharIcon = Icons.barChart;
 const SpreadSheetIcon = Icons.fileSpreadSheet;
@@ -34,6 +35,10 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
   const [chartData, setChartData] = useState([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [isChartView, setIsChartView] = useState<boolean>(true);
+  const [pageCount, setPageCount] = useState<number>(1);
+  const searchParams = useSearchParams();
+  const page = searchParams.get('page');
+
   const [reimbursementList, setReimbursementList] = useState<Reimbursement[]>([
     {
       id: '',
@@ -68,7 +73,7 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
     );
     const endDate = new Date(dateRange?.endDate)?.toLocaleDateString('en-CA');
 
-    const url = `${baseUrl}/${session?.user?.organization?.code}/reimbursement?page=1&sort_by=status&order=desc&status=APPROVED&limit=10&start_date=${startDate}&end_date=${endDate}`;
+    const url = `${baseUrl}/${session?.user?.organization?.code}/reimbursement?page=${page ?? 1}&sort_by=status&order=desc&status=APPROVED&limit=10&start_date=${startDate}&end_date=${endDate}`;
 
     const response = await fetch(url, {
       headers: {
@@ -88,6 +93,7 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
 
     return {
       data,
+      meta,
       message
     };
   }
@@ -124,8 +130,16 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
   const showReimbursementsInTable = async () => {
     const reimbursements = await getReimbursementsTableViewData();
     const reimbusementData = reimbursements.data ? reimbursements.data : [];
+
+    reimbursements?.meta && setPageCount(reimbursements?.meta?.totalPage);
     setReimbursementList(reimbusementData);
   };
+
+  useEffect(() => {
+    if (!isChartView) {
+      showReimbursementsInTable();
+    }
+  }, [page, isChartView]);
 
   useEffect(() => {
     const getReimbursements = async () => {
@@ -248,6 +262,7 @@ export function ReimbursementGroupedBarGraph({ dateRange }: any) {
             ) : (
               <div id='reimbursements-table' className='h-[360px]'>
                 <DataTable
+                  pageCount={pageCount}
                   data-testid='leaves-table-view'
                   columns={columns}
                   data={reimbursementList}

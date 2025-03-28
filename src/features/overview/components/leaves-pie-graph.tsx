@@ -263,7 +263,19 @@ export function LeavesPieGraph({ dateRange }: any) {
           </div>
         </CardTitle>
         <CardDescription>
-          {format(formattedDate, 'LLLL, dd yyyy')}
+          {isAdmin ? (
+            <>
+              {dateRange && (
+                <>
+                  <span>{format(dateRange?.startDate, 'LLL-dd-yyyy')}</span>{' '}
+                  <span className='mx-[0.25rem]'>to</span>
+                  <span>{format(dateRange?.endDate, 'LLL-dd-yyyy')}</span>{' '}
+                </>
+              )}
+            </>
+          ) : (
+            format(formattedDate, 'LLLL, dd yyyy')
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent className='mt-4 h-[500px] flex-1 pb-0'>
@@ -326,6 +338,7 @@ export function LeavesPieGraph({ dateRange }: any) {
         ) : (
           <div id='pietable' className='h-[360px]'>
             <DataTable
+              pageCount={1}
               data-testid='leaves-table-view'
               columns={columns}
               data={leavesList}

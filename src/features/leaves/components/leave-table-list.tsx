@@ -76,6 +76,11 @@ export default async function LeavesListPage() {
   const leaves: Leave[] = data ?? [];
 
   return (
-    <LeavesTable columns={columns} data={leaves} totalItems={totalLeave} />
+    <LeavesTable
+      pageCount={1}
+      columns={columns}
+      data={leaves}
+      totalItems={totalLeave}
+    />
   );
 }
