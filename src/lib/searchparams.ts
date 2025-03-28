@@ -12,7 +12,8 @@ export const searchParams = {
   status: parseAsString,
   leave_type: parseAsString,
   reimbursement_type: parseAsString,
-  order: parseAsString
+  order: parseAsString,
+  sort: parseAsString
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

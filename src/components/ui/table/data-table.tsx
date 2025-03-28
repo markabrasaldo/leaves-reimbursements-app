@@ -37,6 +37,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   totalItems: number;
+  pageCount: number;
   pageSizeOptions?: number[];
 }
 
@@ -44,6 +45,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   totalItems,
+  pageCount,
   pageSizeOptions = [5, 10, 20, 30, 40, 50]
 }: DataTableProps<TData, TValue>) {
   const [currentPage, setCurrentPage] = useQueryState(
@@ -64,7 +66,7 @@ export function DataTable<TData, TValue>({
     pageSize: pageSize
   };
 
-  const pageCount = Math.ceil(totalItems / pageSize);
+  const totalPageCount = Math.ceil(pageCount);
 
   const handlePaginationChange = (
     updaterOrValue:
@@ -83,7 +85,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    pageCount: pageCount,
+    pageCount: totalPageCount,
     state: {
       pagination: paginationState,
       sorting
@@ -160,11 +162,7 @@ export function DataTable<TData, TValue>({
               <>
                 Showing{' '}
                 {paginationState.pageIndex * paginationState.pageSize + 1} to{' '}
-                {Math.min(
-                  (paginationState.pageIndex + 1) * paginationState.pageSize,
-                  totalItems
-                )}{' '}
-                of {totalItems} entries
+                {currentPage * totalItems} of {table.getPageCount()} entries
               </>
             ) : (
               'No entries found'
@@ -199,7 +197,7 @@ export function DataTable<TData, TValue>({
           <div className='flex w-[150px] items-center justify-center text-sm font-medium'>
             {totalItems > 0 ? (
               <>
-                Page {paginationState.pageIndex + 1} of {table.getPageCount()}
+                Page {currentPage} of {table.getPageCount()}
               </>
             ) : (
               'No pages'

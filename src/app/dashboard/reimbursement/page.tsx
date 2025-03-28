@@ -11,7 +11,7 @@ import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 import ReimbursementListPage from '@/features/reimbursements/components/reimbursement-table-list';
 import TableAction from '@/components/table/table-action';
-import UploadCSV from '@/features/leaves/components/upload-csv';
+// import UploadCSV from '@/features/leaves/components/upload-csv';
 import { getSessionDetails } from '@/app/utils/getSessionDetails';
 import { Roles } from 'next-auth';
 
@@ -53,7 +53,7 @@ export default async function Page(props: pageProps) {
         <div className='flex items-start justify-between'>
           <Heading title='Reimbursements' description='Manage reimbursements' />
           <div className='flex items-center gap-2'>
-            {isAdmin && <UploadCSV />}
+            {/* {isAdmin && <UploadCSV />} */}
             <Link
               href='/dashboard/reimbursement/new'
               className={cn(buttonVariants(), 'text-xs md:text-sm')}
